@@ -1,4 +1,13 @@
-TAG: refseqload-1-0-7
+DATE: 04/26/04
+STAFF: sc
+CHANGES:
+1) refseqload.config - changed REFSEQLOAD_QCRPT to SEQLOAD_QCRPT
+   added MSP_QCRPT,  added repeat file processing vars
+2) refseqload.sh - reorganized into a run method for use during repeat file 
+   processing. Added QC reporting.
+3) RefSeqloader.java - updated logging
+
+TAG: refseqload-1-0-2
 DATE: 04/07/04
 STAFF: sc
 RELEASE: dev
