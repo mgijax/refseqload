@@ -1,3 +1,12 @@
+DATE: 06/01/2004
+STAFF: sc
+CHANGES: 
+1) RefSeqloader -
+   added creation of seqidLookup here factored it out of IncremSeqProcessor
+   and MergeSplitProcessor to avoid creating two copies.
+2) refseqload.config.defaults - changed begin and end delimiter to strings, 
+   set INFILE_USE_REGEX to false
+
 TAG: refseqload-1-0-5
 DATE: 05/24/2004
 STAFF: sc
