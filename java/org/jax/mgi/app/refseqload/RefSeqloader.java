@@ -229,7 +229,8 @@ public class RefSeqloader {
          */
         // Create a SQLDataManager for the MGD database from the factory.
         mgdSqlMgr = SQLDataManagerFactory.getShared(SchemaConstants.MGD);
-        mgdSqlMgr.setLogger(logger);
+        //mgdSqlMgr.setLogger(logger);
+
 
         // Create a bcp manager that has been configured for the MGD database.
         mgdBcpMgr = new BCPManager(new BCPManagerCfg("MGD"));
