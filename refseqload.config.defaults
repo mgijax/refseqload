@@ -55,8 +55,8 @@ RADAR_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
 #RADAR_DBSCHEMADIR=/home/sc/jsam/radardbschema
 RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_release/radardbschema
 
-export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER RADAR_DBPASSWORDFILE
-export RADAR_DBSCHEMADIR 
+export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER
+export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
 
 ###########################################################################
 #
@@ -111,17 +111,35 @@ ARCHIVEDIR=${FILEDIR}/archive
 export FILEDIR DATADIR LOGDIR RPTDIR ARCHIVEDIR
 
 #  Complete path name of the RefSeq input file
-INFILE_NAME=${DATADIR}/
+#  frameworks expects the value 'STDIN' if jobstream script pipes input and
+#  jobstream expects the variable PIPED_INFILES to be defined
+INFILE_NAME=STDIN
 
-# RefSeq sequence record delimiter
+# input file directory
+INFILE_DIR=/data/downloads/ftp.ncbi.nih.gov/refseq
+
+# list of files to pipe to application
+PIPED_INFILES="${INFILE_DIR}/vertebrate*protein*gz ${INFILE_DIR}/vertebrate*rna*gz"
+
+# RefSeq sequence record regex end delimiter
 #INFILE_END_DELIMITER="^//"
-INFILE_END_DELIMITER=ORIGIN
 
-# RefSeq sequence record start delimiter
-INFILE_BEGIN_DELIMITER=LOCUS
+# RefSeq sequence record regex start delimiter
+INFILE_BEGIN_DELIMITER="^LOCUS"
+
+# RefSeq sequence record regex end delimiter not including sequence
+INFILE_END_DELIMITER="^ORIGIN"
+
+# Note: Using string delims causes first record to be skipped if
+# there is not a header
+# RefSeq sequence record String start delimiter
+#INFILE_BEGIN_DELIMITER=\nLOCUS
+
+# RefSeq sequence record String end delimiter not including sequence
+#INFILE_END_DELIMITER=\nORIGIN
 
 # true = regex matching for finding record delim is turned on
-INFILE_USE_REGEX=false
+INFILE_USE_REGEX=true
 
 # buffersize in bytes used by nio.ByteBuffer
 # 21,000,000 = ~20 MB
@@ -135,8 +153,8 @@ LOAD_MODE=incremental_initial
 # once in the input
 REPEAT_FILE=${FILEDIR}/data/repeats.out
 
-export INFILE_NAME INFILE_END_DELIMITER INFILE_BEGIN_DELIMITER 
-export INFILE_USE_REGEX INFILE_BUFFERSIZE LOAD_MODE REPEAT_FILE 
+export INFILE_NAME PIPED_INFILES INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER 
+export INFILE_USE_REGEX INFILE_BUFFERSIZE LOAD_MODE REPEAT_FILE
 
 # true if a virtual (computationally derived) sequence
 VIRTUAL=false
@@ -147,20 +165,33 @@ JOBSTREAM=jsam_load
 # SEQ_Sequence Provider controlled vocab for RefSeq 
 PROVIDER=RefSeq
 
+# logical db name for this data provider
+LOGICALDB=RefSeq
+
+export VIRTUAL JOBSTREAM PROVIDER LOGICALDB
+
 # organisms to load
 LOAD_MOUSE=true
 LOAD_RAT=false
 LOAD_HUMAN=false
 
-# load jnumber
-# Don't think we need this anymore
-JNUMBER=J:12345
+export MOUSE RAT HUMAN
 
-# logical db name for this data provider
-LOGICALDB="Sequence DB"
+# Refseq seqid prefixes to load
+NM=true
+NR=true
+NP=true
+NC=false
+NG=false
+NT=false
+NW=false
+NZ=false
+ZP=false
+XM=true
+XR=true
+XP=true
 
-export VIRTUAL JOBSTREAM PROVIDER 
-export LOAD_MOUSE LOAD_RAT LOAD_HUMAN JNUMBER LOGICALDB
+export NM NR NP NC NG NT NW NZ ZP XM XR XP
 
 #  Complete path name of the log files
 LOG_PROC=${LOGDIR}/refseqload.proc.log
