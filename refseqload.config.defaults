@@ -191,8 +191,9 @@ SEQ_LOAD_MODE=incremental_initial
 RADAR_NONCUM_INPUT=false
 
 # max size of a set of non-cums to process in bytes -
-# 50MB compressed seems to be good
-NONCUM_MAX=50000000
+# 200MB compressed seems to be good
+# if set to 0, all files will be processed
+NONCUM_MAX=200000000
 
 export INFILE_BUFFERSIZE SEQ_LOAD_MODE NONCUM_MAX RADAR_NONCUM_INPUT
 
