@@ -1,3 +1,16 @@
+TAG: refseqload-1-0-9
+DATE: 06/30/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:
+1) refseqload.config.defaults - reversed prefixing for update and mergeSplit
+   SCP vars. DLALoader looks for unprefixed vars to create the update script.
+   Added DLA_DB_PREFIX=MGD even though this is the default value - just to make
+   it clear
+2) RefSeqloader.java - change GBInputFile import as in new package. Changed
+   how the GBInputfile gets the interpreter.
+3) See changes below since last tag
+
 DATE: 06/28/04
 STAFF: sc
 CHANGES:
@@ -5,7 +18,7 @@ CHANGES:
 2) README.Install - added to explain how to use DLAInstall
 3) refseqload.config.defaults - removed DATADIR added INPUTDIR, OUTPUTDIR, 
    LOG_FACTORY. Prefixed with SEQ_ and APP_ where appropriate. renamed
-   PIPED_INFILES to APP_INFILES
+   PIPED_INFILES to APP_INFILES. Added DLA_LOADER, DLA_START DLA_LOAD_STREAM
 4) refseqload.sh - updated to use INPUTDIR, OUTPUTDIR, APP_INFILES and 
    other vars whose names were updated with prefixes. removed creation of 
    runtime.config - Java Configuration now supports multiple files.
