@@ -1,3 +1,16 @@
+DATE: 06/28/04
+STAFF: sc
+CHANGES:
+1) Install - removed
+2) README.Install - added to explain how to use DLAInstall
+3) refseqload.config.defaults - removed DATADIR added INPUTDIR, OUTPUTDIR, 
+   LOG_FACTORY. Prefixed with SEQ_ and APP_ where appropriate. renamed
+   PIPED_INFILES to APP_INFILES
+4) refseqload.sh - updated to use INPUTDIR, OUTPUTDIR, APP_INFILES and 
+   other vars whose names were updated with prefixes. removed creation of 
+   runtime.config - Java Configuration now supports multiple files.
+5) RefSeqloader.java - factored and now extends Seqloader.java
+
 DATE: 06/14/2004
 STAFF: sc
 CHANGES:
