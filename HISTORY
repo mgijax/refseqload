@@ -1,3 +1,11 @@
+AG: refseqload-1-0-6
+DATE: 06/08/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: 
+1) refseqload.sh - added check to be sure input files defined
+2) see changes since last tag below
+
 DATE: 06/01/2004
 STAFF: sc
 CHANGES: 
