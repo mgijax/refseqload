@@ -51,12 +51,12 @@ import org.jax.mgi.dbs.mgd.MolecularSource.MSRawAttributes;
 
 public class RefSequenceInterpreter extends GBFormatInterpreter {
         private SequenceInput seqInput;
-        private RefSeqidPrefixChecker seqidChecker;
+        private RefSeqidPrefixChecker prefixChecker;
 
-        public RefSequenceInterpreter(GBOrganismChecker oc)
+        public RefSequenceInterpreter(GBOrganismChecker oc, RefSeqidPrefixChecker pc)
             throws ConfigException, DLALoggingException {
             super(oc);
-            seqidChecker = new RefSeqidPrefixChecker();
+            prefixChecker = pc;
         }
 
         /**
@@ -75,13 +75,13 @@ public class RefSequenceInterpreter extends GBFormatInterpreter {
         public Object interpret(String rcd) throws RecordFormatException {
             seqInput = (SequenceInput)super.interpret(rcd);
             String seqid = seqInput.getPrimaryAcc().getAccID();
-            if (seqidChecker.isPrefix(seqid, "NM") == true ||
-                seqidChecker.isPrefix(seqid, "NR") == true ||
-                seqidChecker.isPrefix(seqid, "NP") == true) {
+            if (prefixChecker.isPrefix(seqid, "NM") == true ||
+                prefixChecker.isPrefix(seqid, "NR") == true ||
+                prefixChecker.isPrefix(seqid, "NP") == true) {
                 seqInput.getSeq().setQuality(SeqloaderConstants.HIGH_QUAL);
             }
-            else if (seqidChecker.isPrefix(seqid, "NZ") == true ||
-                     seqidChecker.isPrefix(seqid, "ZP") == true) {
+            else if (prefixChecker.isPrefix(seqid, "NZ") == true ||
+                     prefixChecker.isPrefix(seqid, "ZP") == true) {
                 seqInput.getSeq().setQuality(SeqloaderConstants.LOW_QUAL);
             }
             else {
@@ -105,7 +105,7 @@ public class RefSequenceInterpreter extends GBFormatInterpreter {
             boolean isValidOrganism = super.isValid(record);
             // if it is an organism we are interested in, check seqid prefix
             if (isValidOrganism == true) {
-                return (seqidChecker.checkPrefix(record));
+                return (prefixChecker.checkPrefix(record));
             }
             else {
                 return isValidOrganism;

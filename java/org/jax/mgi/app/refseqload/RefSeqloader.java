@@ -93,39 +93,43 @@ public class RefSeqloader {
     // we want to load
     private GBOrganismChecker organismChecker;
 
+    // Checks a record and determines if the seqid has a sequence we want
+    // to load
+    private RefSeqidPrefixChecker prefixChecker;
+
     // Interpretor for GenBank format sequence records
-    private RefSequenceInterpreter interpretor = null;
+    private RefSequenceInterpreter interpretor;
 
     // An input data file object for the input file.
-    private InputDataFile inData = null;
+    private InputDataFile inData;
 
     // An iterator that gets one sequence record at a time.
-    private RecordDataIterator iterator = null;
+    private RecordDataIterator iterator;
 
     // Instance of the dataload logger for sending messages to the log files.
-    private DLALogger logger = null;
+    private DLALogger logger;
 
     // An SQL data manager for providing a connection to the MGD database
-    private SQLDataManager mgdSqlMgr = null;
+    private SQLDataManager mgdSqlMgr;
 
     // A bcp manager for handling bcp inserts to the MGD database
-    private BCPManager mgdBcpMgr = null;
+    private BCPManager mgdBcpMgr;
 
     // A stream for handling MGD DAO objects
-    private ScriptWriterCfg scriptCfg = null;
-    private ScriptWriter scriptWriter = null;
-    private BCP_Script_Stream mgdStream = null;
-    //private BCP_Batch_Stream mgdStream = null;
-    //private BCP_Inline_Stream mgdStream = null;
+    private ScriptWriterCfg scriptCfg;
+    private ScriptWriter scriptWriter;
+    private BCP_Script_Stream mgdStream;
+    //private BCP_Batch_Stream mgdStream;
+    //private BCP_Inline_Stream mgdStream;
 
     // An SQL data manager for providing a connection to the Radar database
-    private SQLDataManager rdrSqlMgr = null;
+    private SQLDataManager rdrSqlMgr;
 
     // A bcp manager for handling bcp inserts to the Radar database
-    private BCPManager rdrBcpMgr = null;
+    private BCPManager rdrBcpMgr;
 
     // A stream for handling RDR DAO objects
-    private BCP_Inline_Stream rdrStream = null;
+    private BCP_Inline_Stream rdrStream;
 
     // resolves GenBank sequence attributes to MGI values
     private SequenceAttributeResolver seqResolver;
@@ -204,8 +208,10 @@ public class RefSeqloader {
         // create an organism checker to pass to the interpreter
         organismChecker = new GBOrganismChecker();
 
+        // create a prefix checker to pass to the interpreter
+        prefixChecker = new RefSeqidPrefixChecker();
         // Create an interpretor and get an iterator that uses that interpreter
-        interpretor = new RefSequenceInterpreter(organismChecker);
+        interpretor = new RefSequenceInterpreter(organismChecker, prefixChecker);
         iterator = inData.getIterator(interpretor);
 
         /**
@@ -436,9 +442,18 @@ public class RefSeqloader {
           logger.logdDebug("Least MSProcessor time = " + seqProcessor.lowMSPTime);
           // report free memory average
           logger.logdDebug("Average Free Memory = " + runningFreeMemory / seqCtr);
+          logger.logdDebug("Organism Decider Counts:");
+
+          Vector deciderCts = organismChecker.getDeciderCounts();
+          for (Iterator i = deciderCts.iterator(); i.hasNext();) {
+              logger.logdDebug((String)i.next());
+          }
+          logger.logdDebug("Prefix Decider Counts:");
+          deciderCts = prefixChecker.getDeciderCounts();
+          for (Iterator i = deciderCts.iterator(); i.hasNext();) {
+              logger.logdDebug((String)i.next());
+          }
         }
-
-
 
         // Process merges and splits if we have a MergeSplitProcessor
         if(mergeSplitProcessor != null) {
