@@ -1,6 +1,6 @@
 #format: sh
 #
-#  refseqloader.config
+#  refseqloader.config.defaults
 #
 #  This file sets up environment variables that are needed for the
 #  RefSeq Sequence load
@@ -66,7 +66,12 @@ export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR
 
 JAVA_HOME=/usr/j2se
 JAVA_RUN=${JAVA_HOME}/bin/java
-JAVARUNTIMEOPTS="-Xms2g -Xmx2g"      # allow 2G initial and max heap memory 
+
+# allow 1.5 initial and max heap memory - note this is the max for which
+# the loader will run since child processes (e.g. isql exec of sql files)
+# need memory from the parent process (2G max given to a process by the op sys)
+JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
+
 
 JAVA_LIB=/usr/local/mgi/3.0/lib/java1.4/dla.jar:/usr/local/mgi/3.0/lib/java1.4/core.jar:/usr/local/mgi/3.0/lib/java1.4/dbsmgd.jar:/usr/local/mgi/3.0/lib/java1.4/dbsrdr.jar
 
@@ -237,7 +242,7 @@ export RADAR_BCP_OK_TO_OVERWRITE
 
 ###########################################################################
 #
-#  SQL SCRIPTWRITER SETTINGS FOR MGD DATABASE
+#  SQL SCRIPTWRITER SETTINGS FOR updates
 #
 ###########################################################################
 
@@ -247,7 +252,7 @@ MGD_SCP_PREVENT_EXECUTE=false
 MGD_SCP_OK_TO_OVERWRITE=false
 
 # Use default = script
-#MGD_SCP_FILENAME=
+MGD_SCP_FILENAME=updates
 
 # Use defaults
 #MGD_SCP_SUFFIX=
@@ -256,6 +261,29 @@ MGD_SCP_OK_TO_OVERWRITE=false
 
 export MGD_SCP_PATH MGD_SCP_PREVENT_EXECUTE MGD_SCP_OK_TO_OVERWRITE
 #export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
+
+###########################################################################
+#
+#  SQL SCRIPTWRITER SETTINGS FOR Merges and Splits
+#
+###########################################################################
+
+# setting used to create a ScriptWriter for the merges and split
+SCP_PATH=${MGD_BCP_PATH}
+SCP_PREVENT_EXECUTE=false
+SCP_OK_TO_OVERWRITE=false
+
+# Use default = script
+SCP_FILENAME=mergeSplits
+
+# Use defaults
+#SCP_SUFFIX=
+#SCP_OUTFILENAME=
+#SCP_OUTSUFFIX=
+
+export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
+#export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
+
 ###########################################################################
 #
 #  MISCELLANEOUS SETTINGS
