@@ -158,6 +158,7 @@ run ()
 	shutDown
 	exit 1
     fi
+    echo "refseqload completed successfully" >> ${LOG_PROC}
 }
 
 ##################################################################
@@ -170,11 +171,14 @@ run ()
 preload
 
 # if we are processing the non-cums (incremental mode)
-# get a set of files, 1 file or set < 100 MB (compressed)
+# get a set of files, 1 file or set < configured value in MB (compressed)
 echo "checking RADAR_NONCUM_INPUT: ${RADAR_NONCUM_INPUT}"
 if [ ${RADAR_NONCUM_INPUT} = true -a ${SEQ_LOAD_MODE} = incremental ]
 then
-    echo 'Getting files to Process'
+    echo 'Getting files to Process' | tee -a ${LOG_DIAG}
+    # set the input files to empty string
+    PIPED_INFILES=""
+
     PIPED_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER} ${NONCUM_MAX}` 
     STAT=$?
@@ -185,10 +189,28 @@ then
         shutDown
         exit 1
     fi
+    # if no input files report and shutdown gracefully
+    if [ "${PIPED_INFILES}" = "" ]
+    then
+        echo "No files to process" | tee -a ${LOG_PROC}
+        shutDown
+        exit 0
+    fi
     # save to new var, if we are processing repeats PIPED_INFILES
     # is reassigned and we won't be able to log the processed files properly
     FILES_PROCESSED=${PIPED_INFILES}
     echo 'Done getting files to Process'
+
+fi
+# if we get here then PIPED_INFILES not set in configuration this is an error
+echo "PIPED_INFILES=${PIPED_INFILES}"
+if [ "${PIPED_INFILES}" = "" ]
+then
+    # set STAT for endJobStream.py called from postload in shutDown
+    STAT=1
+    echo "RADAR_NONCUM_INPUT=${RADAR_NONCUM_INPUT}. SEQ_LOAD_MODE=${SEQ_LOAD_MODE}. Check that PIPED_INFILES has been configured. Return status: ${STAT}" | tee -a ${LOG_PROC}
+    shutDown
+    exit 1
 fi
 
 #
@@ -231,7 +253,7 @@ then
     do
         ${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
             ${JOBKEY} ${file}
-            STAT=$?
+        STAT=$?
         if [ ${STAT} -ne 0 ]
         then
             echo "logProcessedFile.csh failed.  \
