@@ -169,14 +169,6 @@ run ()
 #
 preload
 
-#
-# need to partition if these tables are empty
-#
-echo 'Partitioning ACC_Accession, SEQ_Sequence, SEQ_Source_Assoc'
-${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
-${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
-${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
-
 # if we are processing the non-cums (incremental mode)
 # get a set of files, 1 file or set < 100 MB (compressed)
 echo "checking RADAR_NONCUM_INPUT: ${RADAR_NONCUM_INPUT}"
