@@ -19,7 +19,6 @@ import org.jax.mgi.shr.dla.input.genbank.GBFormatInterpreter;
 import org.jax.mgi.shr.dla.input.genbank.GBOrganismChecker;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.ioutils.RecordFormatException;
-import org.jax.mgi.shr.dla.log.DLALoggingException;
 import org.jax.mgi.shr.stringutil.StringLib;
 import org.jax.mgi.dbs.mgd.loads.SeqSrc.MSRawAttributes;
 
@@ -53,7 +52,7 @@ public class RefSequenceInterpreter extends GBFormatInterpreter {
         private RefSeqidPrefixChecker prefixChecker;
 
         public RefSequenceInterpreter(GBOrganismChecker oc, RefSeqidPrefixChecker pc)
-            throws ConfigException, DLALoggingException {
+            throws ConfigException {
             super(oc);
             prefixChecker = pc;
         }
