@@ -69,8 +69,8 @@ fi
 #  Establish the configuration file names.
 #
 CONFIG_COMMON=`pwd`/common.config.sh
-CONFIG_REFSEQLOAD=`pwd`/refseqload.config
-echo ${CONFIG_REFSEQLOAD}
+CONFIG_SEQLOAD=`pwd`/refseqload.config
+echo ${CONFIG_SEQLOAD}
 
 #
 #  Make sure the configuration files are readable.
@@ -80,9 +80,9 @@ then
     echo "Cannot read configuration file: ${CONFIG_COMMON}" | tee -a ${LOG}
     exit 1
 fi
-if [ ! -r ${CONFIG_REFSEQLOAD} ]
+if [ ! -r ${CONFIG_SEQLOAD} ]
 then
-    echo "Cannot read configuration file: ${CONFIG_REFSEQLOAD}" | tee -a ${LOG}
+    echo "Cannot read configuration file: ${CONFIG_SEQLOAD}" | tee -a ${LOG}
     exit 1
 fi
 
@@ -91,7 +91,7 @@ fi
 #  file that can be run to set up the environment.
 #
 CONFIG_RUNTIME=`pwd`/runtime.config
-cat ${CONFIG_COMMON} ${CONFIG_REFSEQLOAD} > ${CONFIG_RUNTIME}
+cat ${CONFIG_COMMON} ${CONFIG_SEQLOAD} > ${CONFIG_RUNTIME}
 . ${CONFIG_RUNTIME}
 
 echo "javaruntime:${JAVARUNTIMEOPTS}"
@@ -147,7 +147,7 @@ run ()
     #
     ${CAT_METHOD}  ${PIPED_INFILES}  | \
 	${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
-	-DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} ${REFSEQLOAD_APP} | \
+	-DCONFIG=${CONFIG_SEQLOAD} -DJOBKEY=${JOBKEY} ${SEQLOAD_APP} | \
 	tee -a  ${LOGDIR}/stdouterr
 
     STAT=$?
@@ -176,6 +176,28 @@ echo 'Partitioning ACC_Accession, SEQ_Sequence, SEQ_Source_Assoc'
 ${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
+
+# if we are processing the non-cums (incremental mode)
+# get a set of files, 1 file or set < 100 MB (compressed)
+echo "checking RADAR_NONCUM_INPUT: ${RADAR_NONCUM_INPUT}"
+if [ ${RADAR_NONCUM_INPUT} = true -a ${SEQ_LOAD_MODE} = incremental ]
+then
+    echo 'Getting files to Process'
+    PIPED_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
+        ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER} ${NONCUM_MAX}` 
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+        echo "getFilesToProcess.csh failed.  \
+            Return status: ${STAT}" >> ${LOG_PROC}
+        shutDown
+        exit 1
+    fi
+    # save to new var, if we are processing repeats PIPED_INFILES
+    # is reassigned and we won't be able to log the processed files properly
+    FILES_PROCESSED=${PIPED_INFILES}
+    echo 'Done getting files to Process'
+fi
 
 #
 # run the load
@@ -206,7 +228,28 @@ then
 	echo "Removing ${REPEAT_TO_PROCESS}"
 	rm ${REPEAT_TO_PROCESS}
     done
+fi
 
+# if we are processing the non-cums (incremental mode)
+# log the non-cums we processed
+if [ ${RADAR_NONCUM_INPUT} = true -a ${SEQ_LOAD_MODE} = incremental ]
+then
+    echo 'Logging processed files'
+    for file in ${FILES_PROCESSED}
+    do
+        ${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
+            ${JOBKEY} ${file}
+            STAT=$?
+        if [ ${STAT} -ne 0 ]
+        then
+            echo "logProcessedFile.csh failed.  \
+                Return status: ${STAT}" >> ${LOG_PROC}
+            shutDown
+            exit 1
+        fi
+
+    done
+    echo 'Done logging processed files'
 fi
 
 #
