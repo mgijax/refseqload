@@ -133,10 +133,6 @@ shutDown ()
     #
     postload
 
-    #
-    #  Mail the logs to the support staff.
-    #
-    mailLog "RefSeq Load" | tee -a ${LOG}
 }
 
 #
