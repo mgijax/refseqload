@@ -91,8 +91,8 @@ JAVA_RUN=${JAVA_HOME}/bin/java
 
 # 2G memory limit in initial mode
 # 1.5 G in incremental mode
-JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
-#JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
+#JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
+JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
 
 JAVA_LIB=/usr/local/mgi/live/lib/java1.4/lib_java_dla/dla.jar:/usr/local/mgi/live/lib/java1.4/lib_java_core/core.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsmgd/dbsmgd.jar:/usr/local/mgi/live/lib/java1.4/lib_java_dbsrdr/dbsrdr.jar
 
@@ -157,7 +157,8 @@ INFILE_NAME=STDIN
 # full path to the RefSeq release input files
 # Note: if LOAD_MODE=incremental and RADAR_NONCUM_INPUT=true
 # the jobstream determines its own input files
-PIPED_INFILES="${DATADIR}/vertebrate*protein*gz ${DATADIR}/vertebrate*rna*gz"
+#PIPED_INFILES="${DATADIR}/vertebrate*protein*gz ${DATADIR}/vertebrate*rna*gz"
+PIPED_INFILES=
 
 # method to cat files to stdin, generally 'cat' or 'gunzip -c'
 CAT_METHOD="/usr/local/bin/gunzip -c"
@@ -184,11 +185,11 @@ INFILE_BUFFERSIZE=21000000
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial doesn't use a MergeSplitProcessor
-SEQ_LOAD_MODE=incremental_initial
+SEQ_LOAD_MODE=incremental
 
 # get non-cum input files from RADAR if 'true' and SEQ_LOAD_MODE=
 # incremental
-RADAR_NONCUM_INPUT=false
+RADAR_NONCUM_INPUT=true
 
 # max size of a set of non-cums to process in bytes -
 # 200MB compressed seems to be good
@@ -337,7 +338,7 @@ export MAIL_LOG_PROC MAIL_LOG_CUR
 ##################################################################
 
 # process repeat file if true
-PROCESS_REPEATS=false
+PROCESS_REPEATS=true
 
 # repeat file directory
 REPEAT_FILEDIR=${FILEDIR}/data
