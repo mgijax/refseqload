@@ -1,0 +1,10 @@
+To Install refseqload:
+
+1) cp refseqload.config.defaults refseqload.config
+and edit as necessary
+
+2) DLAInstall common.config.sh refseqload.config
+
+A typical Install is done from refseqload root directory as follows:
+/usr/local/mgi/live/dbutils/dlautils/DLAInstall /usr/local/mgi/live/mgietc/common.config.sh refseqload.config
+
