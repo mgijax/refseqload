@@ -392,40 +392,59 @@ public class RefSeqloader {
             }
           }
           // if we can't resolve SEQ_Sequence attributes, go to the next
-          // sequence in the input
+          // sequence
           catch (SequenceResolverException e) {
-            logger.logdErr(e.getMessage() + " Sequence: " + si.getPrimaryAcc().getAccID());
-            errCtr++;
-            continue;
+              String message = e.getMessage() + " Sequence: " +
+                   si.getPrimaryAcc().getAccID();
+               logger.logdInfo(message, true);
+               logger.logcInfo(message, true);
+
+               errCtr++;
+               continue;
           }
           // if we can't resolve the source for a sequence, go to the next
-          // sequence in the input
+          // sequence
           catch (MSException e) {
-            logger.logdErr(e.getMessage() + " Sequence: " + si.getPrimaryAcc().getAccID());
-            errCtr++;
-            continue;
-          }
-          // if we've found a repeated sequence in the input, go to the next
-          // sequence in the input
-          catch (RepeatSequenceException e) {
-            logger.logdInfo(e.getMessage() + " Sequence: " + si.getPrimaryAcc().getAccID(), true);
-            continue;
-          }
-          catch (ChangedOrganismException e) {
-            logger.logdInfo(e.getMessage() + " Sequence: " + si.getPrimaryAcc().getAccID(), true);
-            errCtr++;
-            continue;
-          }
-          catch (ChangedLibraryException e) {
-            logger.logdInfo(e.getMessage() + " Sequence: " + si.getPrimaryAcc().getAccID(), true);
-            errCtr++;
-            continue;
+              String message = e.getMessage() + " Sequence: " +
+                   si.getPrimaryAcc().getAccID();
+               logger.logdInfo(message, true);
+               logger.logcInfo(message, true);
 
+               errCtr++;
+               continue;
+          }
+          // log repeat sequence, go to the next sequence
+          catch (RepeatSequenceException e) {
+              String message = e.getMessage() + " Sequence: " +
+                   si.getPrimaryAcc().getAccID();
+               logger.logdInfo(message, true);
+               logger.logcInfo(message, true);
+
+               errCtr++;
+               continue;
+          }
+          // log changed organism, go to next sequence
+          catch (ChangedOrganismException e) {
+              String message = e.getMessage() + " Sequence: " +
+                   si.getPrimaryAcc().getAccID();
+               logger.logdInfo(message, true);
+               logger.logcInfo(message, true);
+
+               errCtr++;
+               continue;
+          }
+          // log changed library, go to next sequence
+          catch (ChangedLibraryException e) {
+              String message = e.getMessage() + " Sequence: " +
+                   si.getPrimaryAcc().getAccID();
+               logger.logdInfo(message, true);
+               logger.logcInfo(message, true);
+
+               errCtr++;
+               continue;
           }
 
           passedCtr++;
-          // Too much of a dog to do every sequence
-          //System.gc();
           sequenceStopWatch.stop();
           logger.logdDebug("MEM&TIME: " + (passedCtr + errCtr) + "\t" +
                           currentFreeMemory + "\t" + sequenceStopWatch.time(), false);
