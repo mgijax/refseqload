@@ -1,3 +1,12 @@
+TAG: refseqload-1-0-7
+DATE: 04/07/04
+STAFF: sc
+RELEASE: dev
+CHANGES:
+1) RefSeqloader.java - moved some logging around. Added some log proc logging
+2) refseqload.config.defaults - added CAT_METHOD
+3) refseqload.sh - added CAT_METHOD
+
 TAG: refseqload-1-0-1
 DATE: 03/18/04
 STAFF: sc
