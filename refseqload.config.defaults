@@ -14,19 +14,23 @@
 ###########################################################################
 
 #  Installation directory for the RefSeq sequence load
-INSTALLDIR=/usr/local/mgi/3.0/dataload/refseqload
+INSTALLDIR=/usr/local/mgi/live/dataload/refseqload
+#INSTALLDIR=/usr/local/mgi/3.0/dataload/refseqload 
 #INSTALLDIR=/home/sc/jsam/refseqload
 
 #  Installation directory for the DB utilities product
-DBUTILSDIR=/usr/local/mgi/3.0/dbutils/mgidbutilities
+DBUTILSDIR=/usr/local/mgi/live/dbutils/mgidbutilities
+#DBUTILSDIR=/usr/local/mgi/3.0/dbutils/mgidbutilities
 #DBUTILSDIR=/home/sc/jsam/mgidbutilities
 
 # Installation directory for the radar dbutilites product
-RADARDBUTILSDIR=/usr/local/mgi/3.0/dbutils/radardbutilities
+RADARDBUTILSDIR=/usr/local/mgi/live/dbutils/radardbutilities
+#RADARDBUTILSDIR=/usr/local/mgi/3.0/dbutils/radardbutilities
 #RADARDBUTILSDIR=/home/sc/jsam/radardbutilities 
 
 #  Installation directory for the QC report product
-QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
+QCRPTDIR=/usr/local/mgi/live/qcreports_db
+#QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
 #QCRPTDIR=/home/sc/jsam/qcreports_db
 
 export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR QCRPTDIR
@@ -38,26 +42,39 @@ export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR QCRPTDIR
 ###########################################################################
 
 # MGD Connection parameters 
-MGD_DBSERVER=DEV1_MGI
-MGD_DBURL=rohan.informatics.jax.org:4101
-MGD_DBNAME=mgd_jsamlec
-#MGD_DBNAME=mgd_jsamsc
+MGD_DBSERVER=PROD_MGI
+#MGD_DBSERVER=DEV1_MGI
+
+MGD_DBURL=shire.informatics.jax.org:4101
+#MGD_DBURL=rohan.informatics.jax.org:4101
+
+MGD_DBNAME=mgd
+#MGD_DBNAME=mgd_jsamlec
+
 MGD_DBUSER=mgd_dbo
 MGD_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
-MGD_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/mgd_jsamlec/mgddbschema
-#MGD_DBSCHEMADIR=/home/sc/jsam/mgddbschema
+
+MGD_DBSCHEMADIR=/usr/local/mgi/live/dbutils/mgd/mgddbschema
+#MGD_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/mgd_jsamlec/mgddbschema
 
 export MGD_DBSERVER MGD_DBURL MGD_DBNAME
 export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
 
 # RADAR Connection parameters 
-RADAR_DBSERVER=DEV1_MGI
-RADAR_DBURL=rohan.informatics.jax.org:4101
-RADAR_DBNAME=radar_jsam
+RADAR_DBSERVER=PROD_MGI
+#RADAR_DBSERVER=DEV1_MGI
+
+RADAR_DBURL=shire.informatics.jax.org:4101
+#RADAR_DBURL=rohan.informatics.jax.org:4101
+
+RADAR_DBNAME=radar
+#RADAR_DBNAME=radar_jsam
+
 RADAR_DBUSER=mgd_dbo
 RADAR_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
+
+RADAR_DBSCHEMADIR=/usr/local/mgi/live/dbutils/radar/radardbschema
 RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_jsam/radardbschema
-#RADAR_DBSCHEMADIR=/home/sc/jsam/radardbschema
 
 export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER
 export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
@@ -71,12 +88,12 @@ export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR
 JAVA_HOME=/usr/j2se
 JAVA_RUN=${JAVA_HOME}/bin/java
 
-# allow 2G memory limit in initial mode
+# 2G memory limit in initial mode
 # 1.5 G in incremental mode
 JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
 #JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 
-JAVA_LIB=/usr/local/mgi/3.0/lib/java1.4/dla.jar:/usr/local/mgi/3.0/lib/java1.4/core.jar:/usr/local/mgi/3.0/lib/java1.4/dbsmgd.jar:/usr/local/mgi/3.0/lib/java1.4/dbsrdr.jar
+JAVA_LIB=/usr/local/mgi/live/lib/java1.4/dla.jar:/usr/local/mgi/live/lib/java1.4/core.jar:/usr/local/mgi/live/lib/java1.4/dbsmgd.jar:/usr/local/mgi/live/lib/java1.4/dbsrdr.jar
 
 CLASSPATH=.:${INSTALLDIR}/refseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
@@ -114,12 +131,13 @@ SEQLOAD_SH=${INSTALLDIR}/bin/refseqload.sh
 export SEQLOAD_SH
 
 #  Full path to dir containing the data, report, log and archive directories
-FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
+FILEDIR=/data/loads/genbank/refseqload
+#FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
 
 # Full path to dir containing RefSeq release input files - 
 # if LOAD_MODE=incremental the jobstream determines its own input directory
-DATADIR=/net/hobbiton/data/downloads/ftp.ncbi.nih.gov/refseq
-#DATADIR=/net/mtdoom/vol/rohan/data/downloads/ftp.ncbi.nih.gov/refseqloader
+DATADIR=/data/downloads/ftp.ncbi.nih.gov/refseq
+#DATADIR=/net/hobbiton/data/downloads/ftp.ncbi.nih.gov/refseq
 
  Full path the the logs, reports, and archive directories
 LOGDIR=${FILEDIR}/logs
