@@ -158,7 +158,7 @@ export INFILE_USE_REGEX INFILE_BUFFERSIZE LOAD_MODE REPEAT_FILE
 VIRTUAL=false
 
 # this load's login value for DB table CreatedBy and ModifiedBy
-JOBSTREAM=jsam_load
+JOBSTREAM=refseq_load
 
 # SEQ_Sequence Provider controlled vocab for RefSeq 
 PROVIDER=RefSeq
