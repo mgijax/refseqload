@@ -1,29 +1,6 @@
-DATE: 02/12/2004
-STAFF: sc
-RELEASE:
-CHANGES:removed new line from end of  INFILE_END_DELIMITER=ORIGIN 
-
-TAG: gbseqload-1-0-3
-DATE: 02/11/2004
-STAFF: sc
-RELEASE:
-CHANGES: tag for development build
-
-TAG: gbseqload-1-0-2
-DATE: 01/08/2004
-STAFF: sc
-RELEASE:
-CHANGES: added wrapper script - the beginnings of the jobstream
-
-TAG: gbseqload-1-0-1
-DATE: 01/08/2004
-STAFF: sc
-RELEASE:
-CHANGES: tag of code review changes for gbseqload-slim
-
-TAG: gbseqload-1-0-0
-DATE: 12/08/2003
-STAFF: sc
+TAG: 
+DATE:
+STAFF:
 RELEASE: 
-CHANGES: initial tag at code review of gbseqload-slim
+CHANGES:
 
