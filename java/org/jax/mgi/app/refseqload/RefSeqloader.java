@@ -23,6 +23,7 @@ import org.jax.mgi.shr.dla.seqloader.DRSeqProcessor;
 import org.jax.mgi.shr.dla.seqloader.SeqEventDetector;
 import org.jax.mgi.shr.dla.seqloader.SequenceInput;
 import org.jax.mgi.shr.dla.seqloader.SequenceAttributeResolver;
+import org.jax.mgi.shr.dla.seqloader.SeqQCReporter;
 import org.jax.mgi.shr.dla.seqloader.GBOrganismChecker;
 import org.jax.mgi.shr.dla.seqloader.SeqloaderException;
 import org.jax.mgi.shr.dla.seqloader.SeqloaderExceptionFactory;
@@ -47,6 +48,7 @@ import org.jax.mgi.shr.dbutils.dao.BCP_Batch_Stream;
 import org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream;
 import org.jax.mgi.shr.dbutils.ScriptWriter;
 import org.jax.mgi.shr.config.ScriptWriterCfg;
+import org.jax.mgi.shr.dbutils.ScriptException;
 import org.jax.mgi.shr.exception.MGIException;
 import org.jax.mgi.shr.ioutils.RecordFormatException;
 import org.jax.mgi.shr.ioutils.IOUException;
@@ -115,9 +117,14 @@ public class RefSeqloader {
     // A bcp manager for handling bcp inserts to the MGD database
     private BCPManager mgdBcpMgr;
 
-    // A stream for handling MGD DAO objects
-    private ScriptWriterCfg scriptCfg;
-    private ScriptWriter scriptWriter;
+    // ScriptWriter and Script cfg for writing and exec'ing update script
+    private ScriptWriterCfg updateScriptCfg = null;
+    private ScriptWriter updateScriptWriter = null;
+
+    // ScriptWriter and Script cfg for writing and exec'ing mergeSplit script
+    private ScriptWriterCfg mergeSplitScriptCfg = null;
+    private ScriptWriter mergeSplitScriptWriter = null;
+
     private BCP_Script_Stream mgdStream;
     //private BCP_Batch_Stream mgdStream;
     //private BCP_Inline_Stream mgdStream;
@@ -130,6 +137,9 @@ public class RefSeqloader {
 
     // A stream for handling RDR DAO objects
     private BCP_Inline_Stream rdrStream;
+
+    // A QC reporter for managing all qc reports for the seqloader
+    private SeqQCReporter qcReporter = null;
 
     // resolves GenBank sequence attributes to MGI values
     private SequenceAttributeResolver seqResolver;
@@ -231,9 +241,9 @@ public class RefSeqloader {
         // Create a stream for handling MGD DAO objects.
         //mgdStream = new BCP_Batch_Stream(mgdSqlMgr, mgdBcpMgr);
         //mgdStream = new BCP_Inline_Stream(mgdSqlMgr, mgdBcpMgr);
-        scriptCfg = new ScriptWriterCfg("MGD");
-        scriptWriter = new ScriptWriter(scriptCfg, mgdSqlMgr);
-        mgdStream = new BCP_Script_Stream(scriptWriter, mgdBcpMgr);
+        updateScriptCfg = new ScriptWriterCfg("MGD");
+        updateScriptWriter = new ScriptWriter(updateScriptCfg, mgdSqlMgr);
+        mgdStream = new BCP_Script_Stream(updateScriptWriter, mgdBcpMgr);
 
         /**
          * Set up RDR stream
@@ -248,10 +258,9 @@ public class RefSeqloader {
         rdrBcpMgr.setSQLDataManager(rdrSqlMgr);
         rdrBcpMgr.setLogger(logger);
 
-        // Create a stream for handling RDR DAO objects.
+        // Create qc reporter
         rdrStream = new BCP_Inline_Stream(rdrSqlMgr, rdrBcpMgr);
-
-
+        qcReporter = new SeqQCReporter(rdrStream);
 
         seqResolver = new GBSeqAttributeResolver();
         if (loadMode.equals(SeqloaderConstants.INCREM_INITIAL_LOAD_MODE)) {
@@ -262,10 +271,18 @@ public class RefSeqloader {
                                                   //repeatSeqWriter);
         }
         else if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
-            //mergeSplitProcessor = new MergeSplitProcessor();
+            mergeSplitProcessor = new MergeSplitProcessor(qcReporter);
+
+            // Note: here I want to use the default prefixing, so normally
+            // wouldn't need to pass a Configurator, but the ScriptWriter(sqlMgr)
+            // is a protected constructor
+            mergeSplitScriptCfg = new ScriptWriterCfg();
+            mergeSplitScriptWriter = new ScriptWriter(mergeSplitScriptCfg, mgdSqlMgr);
+
             // passing in a null merge split processor until it is tested
             seqProcessor = new IncremSeqProcessor(mgdStream,
                                                   rdrStream,
+                                                  qcReporter,
                                                   seqResolver,
                                                   mergeSplitProcessor,
                                                   repeatSeqWriter);
@@ -310,10 +327,11 @@ public class RefSeqloader {
 
     private void load ()
         throws ConfigException, CacheException, DBException,
-            KeyNotFoundException, IOUException, DLALoggingException,
-             MSException, TranslationException, SeqloaderException {
-        // DEBUG stuff
+    KeyNotFoundException, IOUException, DLALoggingException,
+     MSException, TranslationException, ScriptException,
+     SeqloaderException {
 
+        // DEBUG stuff
         // Timing the load
         Stopwatch loadStopWatch = new Stopwatch();
         loadStopWatch.start();
@@ -421,8 +439,8 @@ public class RefSeqloader {
         loadStopWatch.stop();
         double totalLoadTime = loadStopWatch.time();
 
-        // report total time for GBSeqloader.load()
-        logger.logdDebug("Total GBSeqloader.load() time in seconds: " + totalLoadTime +
+        // report total time for RefSeqloader.load()
+        logger.logdDebug("Total RefSeqloader.load() time in seconds: " + totalLoadTime +
                          " time in minutes: " + (totalLoadTime/60));
 
         // report Sequence Lookup execution times
@@ -443,22 +461,25 @@ public class RefSeqloader {
           // report free memory average
           logger.logdDebug("Average Free Memory = " + runningFreeMemory / seqCtr);
           logger.logdDebug("Organism Decider Counts:");
-
-          Vector deciderCts = organismChecker.getDeciderCounts();
-          for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-              logger.logdDebug((String)i.next());
-          }
-          logger.logdDebug("Prefix Decider Counts:");
-          deciderCts = prefixChecker.getDeciderCounts();
-          for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-              logger.logdDebug((String)i.next());
-          }
+        }
+        Vector deciderCts = organismChecker.getDeciderCounts();
+        for (Iterator i = deciderCts.iterator(); i.hasNext();) {
+            logger.logdDebug((String)i.next());
+        }
+        logger.logdDebug("Prefix Decider Counts:");
+        deciderCts = prefixChecker.getDeciderCounts();
+        for (Iterator i = deciderCts.iterator(); i.hasNext();) {
+            logger.logdDebug((String)i.next());
         }
 
+        logger.logdDebug("Processing Merge/Splits");
         // Process merges and splits if we have a MergeSplitProcessor
         if(mergeSplitProcessor != null) {
-            mergeSplitProcessor.process();
+              mergeSplitProcessor.process(mergeSplitScriptWriter);
+              mergeSplitScriptWriter.execute();
         }
+        logger.logdDebug("Finished processing Merge/Splits");
+
         // processes inserts, deletes and updates to the database; method depends
         // on the type of stream
         mgdStream.close();
