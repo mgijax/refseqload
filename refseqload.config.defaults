@@ -141,7 +141,7 @@ FILEDIR=/data/loads/genbank/refseqload
 DATADIR=/data/downloads/ftp.ncbi.nih.gov/refseq
 #DATADIR=/net/hobbiton/data/downloads/ftp.ncbi.nih.gov/refseq
 
- Full path the the logs, reports, and archive directories
+# Full path the the logs, reports, and archive directories
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
 ARCHIVEDIR=${FILEDIR}/archive
