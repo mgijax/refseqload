@@ -6,7 +6,7 @@ package org.jax.mgi.app.refseqload;
 import org.jax.mgi.shr.timing.Stopwatch;
 import org.jax.mgi.shr.dla.seqloader.GBOrganismChecker;
 import org.jax.mgi.shr.dla.seqloader.SeqLoader;
-import org.jax.mgi.shr.dla.seqloader.GBInputFile;
+import org.jax.mgi.shr.dla.genbank.GBInputFile;
 import org.jax.mgi.shr.exception.MGIException;
 import java.util.Vector;
 import java.util.Iterator;
@@ -68,15 +68,16 @@ public class RefSeqloader extends SeqLoader {
         // Cant override initialize to instantiate pc; super.initialize calls
         // this method and pc won't be set yet.
         pc = new RefSeqidPrefixChecker();
+
         // set oc in the superclass for reporting purposes
         super.organismChecker = oc;
 
-        // Create the RefSequenceInterpretor then the GBInputfile
-        RefSequenceInterpreter interp = new RefSequenceInterpreter(oc, pc);
-        GBInputFile inData = new GBInputFile(interp);
+        // Create a GBInputfile
+        //RefSequenceInterpreter interp = new RefSequenceInterpreter(oc, pc);
+        GBInputFile inData = new GBInputFile();
 
-        // get an iterator for the GBInputFile
-        super.iterator = inData.getIterator();
+        // get an iterator for the GBInputFile witha RefSequenceInterpreter
+        super.iterator = inData.getIterator(new RefSequenceInterpreter(oc, pc));
     }
 
     /**
