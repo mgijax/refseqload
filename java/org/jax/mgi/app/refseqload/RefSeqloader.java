@@ -276,14 +276,6 @@ public class RefSeqloader {
             mergeSplitScriptCfg = new ScriptWriterCfg();
             mergeSplitScriptWriter = new ScriptWriter(mergeSplitScriptCfg, mgdSqlMgr);
 
-            // passing in a null merge split processor until it is tested
-            seqProcessor = new IncremSeqProcessor(mgdStream,
-                                                  rdrStream,
-                                                  qcReporter,
-                                                  seqResolver,
-                                                  mergeSplitProcessor,
-                                                  repeatSeqWriter);
-
             // sequence loader exception factory
             eFactory = new SeqloaderExceptionFactory();
             try {
@@ -296,9 +288,16 @@ public class RefSeqloader {
                         SeqloaderExceptionFactory.RepeatFileIOException, e);
                 throw e1;
             }
-
+            // passing in a null merge split processor until it is tested
+            seqProcessor = new IncremSeqProcessor(mgdStream,
+               rdrStream,
+               qcReporter,
+               seqResolver,
+               mergeSplitProcessor,
+               repeatSeqWriter);
         }
     }
+
     /**
      * what this method does ...
      * @assumes Nothing
