@@ -225,6 +225,7 @@ run
 #
 # run any repeat files if configured to do so
 #
+ctr=1
 if [ ${APP_PROCESS_REPEATS} = true ]
 then
     while [ -s ${SEQ_REPEAT_FILE} ]
@@ -243,8 +244,11 @@ then
 	run
 
 	# remove the repeat file we just ran
-	echo "Removing ${APP_REPEAT_TO_PROCESS}"
-	rm ${APP_REPEAT_TO_PROCESS}
+	#echo "Removing ${APP_REPEAT_TO_PROCESS}"
+	#rm ${APP_REPEAT_TO_PROCESS}
+        echo "saving repeat file ${APP_REPEAT_TO_PROCESS}.${ctr}"
+        mv ${APP_REPEAT_TO_PROCESS} ${APP_REPEAT_TO_PROCESS}.${ctr}
+        ctr=`expr ${ctr} + 1`
     done
 fi
 
