@@ -14,14 +14,14 @@ import java.util.Iterator;
 
 /**
  * @is an object which extends Seqloader and implements the Seqloader
- * getRecordDataIterator method to set Seqloader's OrganismChecker and
+ * getDataIterator method to set Seqloader's OrganismChecker and
  * RecordDataIterator
  *
  * @has a RefSeqidPrefixChecker to determine the prefix of a RefSeq seqid
  *
  * @does
  * <UL>
- * <LI>implements superclass (Seqloader) getRecordDataIterator to set
+ * <LI>implements superclass (Seqloader) getDataIterator to set
  *     OrganismChecker with a GBOrganismChecker and create a RecordDataIterator
  *     on a GBInputFile
  * <LI>It has an empty implementation of the superclass (DLALoader)
@@ -58,7 +58,7 @@ public class RefSeqloader extends SeqLoader {
      * @throws MGIException
      */
 
-    protected void getRecordDataIterator() throws MGIException {
+    protected void getDataIterator() throws MGIException {
 
         // create an organism checker for the interpreter
         // need to create and pass to interpretor as base class - not as
