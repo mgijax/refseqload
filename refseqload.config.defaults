@@ -303,11 +303,14 @@ export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 #
 ###########################################################################
 
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="RefSeq Load"
+
 #  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_PROC="sc, lec"
+MAIL_LOG_PROC="sc,lec"
 MAIL_LOG_CUR="sc"
 
-export MAIL_LOG_PROC MAIL_LOG_CUR
+export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
 
 ##################################################################
 # repeat file processing used when in incremental mode
