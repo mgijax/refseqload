@@ -53,11 +53,12 @@ export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
 # RADAR Connection parameters 
 RADAR_DBSERVER=DEV1_MGI
 RADAR_DBURL=rohan.informatics.jax.org:4101
-RADAR_DBNAME=radar_release
+RADAR_DBNAME=radar_jsam
+#RADAR_DBNAME=radar_release
 RADAR_DBUSER=mgd_dbo
 RADAR_DBPASSWORDFILE=${DBUTILSDIR}/.mgd_dbo_password
-#RADAR_DBSCHEMADIR=/home/sc/jsam/radardbschema
 RADAR_DBSCHEMADIR=/usr/local/mgi/3.0/dbutils/radar_release/radardbschema
+#RADAR_DBSCHEMADIR=/home/sc/jsam/radardbschema
 
 export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER
 export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
@@ -104,9 +105,12 @@ REFSEQLOAD_SH=${INSTALLDIR}/bin/refseqload.sh
 
 #  seqloader QC report shell script
 # this script doesn't yet exist
-REFSEQLOAD_QCRPT=${QCRPTDIR}/refseqloadRpt.sh
+SEQLOAD_QCRPT=${QCRPTDIR}/seqload/runQC.csh
 
-export REFSEQLOAD_APP REFSEQLOAD_SH REFSEQLOAD_QCRPT
+# molecular source processor QC report script
+MSP_QCRPT=${QCRPTDIR}/msp/runQC.csh
+
+export REFSEQLOAD_APP REFSEQLOAD_SH SEQLOAD_QCRPT MSP_QCRPT
 
 #  Path name of the data, report, log and archive directories
 FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
@@ -158,12 +162,8 @@ INFILE_BUFFERSIZE=21000000
 # incremental_initial doesn't use a MergeSplitProcessor
 SEQ_LOAD_MODE=incremental_initial
 
-# path to repeat file; file refseqload writes sequences found more than
-# once in the input
-SEQ_REPEAT_FILE=${FILEDIR}/data/repeats.out
-
 export INFILE_NAME PIPED_INFILES INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER 
-export INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE SEQ_REPEAT_FILE
+export INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE 
 
 # true if a virtual (computationally derived) sequence
 SEQ_VIRTUAL=false
@@ -184,7 +184,7 @@ LOAD_MOUSE=true
 LOAD_RAT=false
 LOAD_HUMAN=false
 
-export MOUSE RAT HUMAN
+export LOAD_MOUSE LOAD_RAT LOAD_HUMAN
 
 # Refseq seqid prefixes to load
 NM=true
@@ -209,7 +209,7 @@ LOG_CUR=${LOGDIR}/refseqload.cur.log
 LOG_VAL=${LOGDIR}/refseqload.val.log
 
 # Send debug messages to the diagnostic log
-LOG_DEBUG=true
+LOG_DEBUG=false
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG
 
@@ -233,7 +233,7 @@ export MGD_BCP_PATH MGD_BCP_PREVENT_EXECUTE MGD_BCP_TRUNCATE_LOG
 export MGD_BCP_DROP_INDEXES MGD_BCP_RECORD_STAMPING MGD_BCP_AUTO_FLUSH
 export MGD_BCP_OK_TO_OVERWRITE
 
-#  Settings used to create a BCP manager for the MGD database
+#  Settings used to create a BCP manager for the RADAR database
 RADAR_BCP_PATH=${FILEDIR}/data
 RADAR_BCP_PREVENT_EXECUTE=false
 RADAR_BCP_TRUNCATE_LOG=true
@@ -301,3 +301,26 @@ MAIL_LOG_PROC="sc"
 MAIL_LOG_CUR=""
 
 export MAIL_LOG_PROC MAIL_LOG_CUR
+
+###########################
+# repeat file processing
+##########################
+
+# process repeat file if true
+PROCESS_REPEATS=false
+
+# repeat file directory
+REPEAT_FILEDIR=${FILEDIR}/data
+
+# repeat file name
+REPEAT_FILENAME=repeats.out
+
+# full path to repeat file
+SEQ_REPEAT_FILE=${REPEAT_FILEDIR}/${REPEAT_FILENAME}
+
+# rename repeat file to this name for processing
+REPEAT_TO_PROCESS=${SEQ_REPEAT_FILE}.to.process
+
+export PROCESS_REPEATS REPEAT_FILEDIR REPEAT_FILENAME
+export SEQ_REPEAT_FILE REPEAT_TO_PROCESS
+
