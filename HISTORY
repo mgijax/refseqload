@@ -1,3 +1,8 @@
+DATE: 11/30/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: refseqload.config.default - added value to INPUTDIR
+
 refseqload-assembly-4
 DATE: 11/19/2004
 STAFF: sc
