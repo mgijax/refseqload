@@ -266,7 +266,7 @@ then
     for file in ${FILES_PROCESSED}
     do
         ${RADARDBUTILSDIR}/bin/logProcessedFile.csh ${RADAR_DBSCHEMADIR} \
-            ${JOBKEY} ${file}
+            ${JOBKEY} ${file} ${SEQ_PROVIDER}
         STAT=$?
         if [ ${STAT} -ne 0 ]
         then
