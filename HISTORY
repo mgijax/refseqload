@@ -1,3 +1,26 @@
+TAG: refseqload-1-0-12
+DATE: 07/14/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:TR5395
+1) refseqload.sh - added param to preload to archive outputdir
+    - added call to cleanDir to clean outputdir and rptdir
+2) refseqload.config.default - changed BCP_Script_Stream to BCP_Stream
+
+DATE: 10/12/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: TR5395
+1) index.html - fixed path to a QC report
+2) RefSeqloader - changed name of method getRecordDataIterator() to
+   getDataIterator()
+3) refseqload.sh - added saving of all repeat files
+
+DATE: 08/16/2004
+STAFF: sc
+CHANGES:
+1) added changed library report to index page.
+
 TAG: refseqload-1-0-11
 DATE: 07/14/2004
 STAFF: sc
