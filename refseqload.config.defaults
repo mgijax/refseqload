@@ -102,7 +102,8 @@ export REFSEQLOAD_APP REFSEQLOAD_SH REFSEQLOAD_QCRPT
 
 #  Path name of the data, report, log and archive directories
 FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
-DATADIR=/net/mtdoom/vol/rohan/data/downloads/ftp.ncbi.nih.gov/refseqloader
+DATADIR=/net/hobbiton/data/downloads/ftp.ncbi.nih.gov/refseq
+#DATADIR=/net/mtdoom/vol/rohan/data/downloads/ftp.ncbi.nih.gov/refseqloader
 
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
@@ -115,11 +116,8 @@ export FILEDIR DATADIR LOGDIR RPTDIR ARCHIVEDIR
 #  jobstream expects the variable PIPED_INFILES to be defined
 INFILE_NAME=STDIN
 
-# input file directory
-INFILE_DIR=/data/downloads/ftp.ncbi.nih.gov/refseq
-
 # list of files to pipe to application
-PIPED_INFILES="${INFILE_DIR}/vertebrate*protein*gz ${INFILE_DIR}/vertebrate*rna*gz"
+PIPED_INFILES="${DATADIR}/vertebrate*protein*gz ${DATADIR}/vertebrate*rna*gz"
 
 # RefSeq sequence record regex end delimiter
 #INFILE_END_DELIMITER="^//"
