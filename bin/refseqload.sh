@@ -179,6 +179,7 @@ ${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
 
+#gunzip -c 
 gunzip -c ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} -Xloggc:${LOGDIR}/refseqloadGCStatus.txt -Xprof ${REFSEQLOAD_APP} | tee ${LOGDIR}/refseqloadProfile.txt
 
 #-Xrunhprof:file=${LOGDIR}/refseqloadProfile.txt,format=b ${REFSEQLOAD_APP}
