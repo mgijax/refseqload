@@ -19,7 +19,6 @@ import org.jax.mgi.shr.dla.seqloader.SeqloaderConstants;
 import org.jax.mgi.shr.dla.seqloader.MergeSplitProcessor;
 import org.jax.mgi.shr.dla.seqloader.SeqProcessor;
 import org.jax.mgi.shr.dla.seqloader.IncremSeqProcessor;
-import org.jax.mgi.shr.dla.seqloader.DRSeqProcessor;
 import org.jax.mgi.shr.dla.seqloader.SeqEventDetector;
 import org.jax.mgi.shr.dla.seqloader.SequenceInput;
 import org.jax.mgi.shr.dla.seqloader.SequenceAttributeResolver;
@@ -32,7 +31,6 @@ import org.jax.mgi.shr.dla.seqloader.RepeatSequenceException;
 import org.jax.mgi.shr.dla.seqloader.RepeatSequenceException;
 import org.jax.mgi.shr.dla.seqloader.ChangedOrganismException;
 import org.jax.mgi.shr.dla.seqloader.ChangedLibraryException;
-import org.jax.mgi.shr.dla.seqloader.GBSeqAttributeResolver;
 import org.jax.mgi.shr.dla.DLALogger;
 import org.jax.mgi.shr.dla.DLAException;
 import org.jax.mgi.shr.dla.DLAExceptionHandler;
@@ -173,14 +171,14 @@ public class RefSeqloader {
         try {
             seqloader.initialize();
         }
-        catch (MGIException e) {
+        catch (Exception e) {
             System.out.println(e.toString());
         }
         // load sequences
        try {
            seqloader.load();
        }
-       catch (MGIException e) {
+       catch (Exception e) {
            e1 = new DLAException("Sequence loader failed", false);
            e1.setParent(e);
            eh = new DLAExceptionHandler();
@@ -263,13 +261,11 @@ public class RefSeqloader {
         rdrStream = new BCP_Inline_Stream(rdrSqlMgr, rdrBcpMgr);
         qcReporter = new SeqQCReporter(rdrStream);
 
-        seqResolver = new GBSeqAttributeResolver();
+        seqResolver = new SequenceAttributeResolver();
         if (loadMode.equals(SeqloaderConstants.INCREM_INITIAL_LOAD_MODE)) {
-            seqProcessor = new IncremSeqProcessor(mgdStream,
+            seqProcessor = new SeqProcessor(mgdStream,
                                                   rdrStream,
                                                   seqResolver);
-                                                  //mergeSplitProcessor,
-                                                  //repeatSeqWriter);
         }
         else if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
             mergeSplitProcessor = new MergeSplitProcessor(qcReporter);
@@ -301,9 +297,6 @@ public class RefSeqloader {
                 throw e1;
             }
 
-        }
-        else if (loadMode.equals(SeqloaderConstants.DELETE_RELOAD_MODE)) {
-            seqProcessor = new DRSeqProcessor(mgdStream, seqResolver);
         }
     }
     /**
@@ -382,10 +375,10 @@ public class RefSeqloader {
 
           try {
             if (loadMode.equals(SeqloaderConstants.INCREM_INITIAL_LOAD_MODE)) {
-                seqProcessor.processAddEvent(si);
+                seqProcessor.processInput(si);
             }
             else {
-              seqProcessor.processSequence(si);
+              seqProcessor.processInput(si);
             }
 
             //DEBUG
@@ -435,22 +428,51 @@ public class RefSeqloader {
           // Too much of a dog to do every sequence
           //System.gc();
           sequenceStopWatch.stop();
-          logger.logdInfo("MEM&TIME: " + (passedCtr + errCtr) + "\t" + currentFreeMemory + "\t" + sequenceStopWatch.time(), false);
+          logger.logdDebug("MEM&TIME: " + (passedCtr + errCtr) + "\t" +
+                          currentFreeMemory + "\t" + sequenceStopWatch.time(), false);
         }
         loadStopWatch.stop();
         double totalLoadTime = loadStopWatch.time();
 
-        // report total time for RefSeqloader.load()
-        logger.logdDebug("Total RefSeqloader.load() time in seconds: " + totalLoadTime +
-                         " time in minutes: " + (totalLoadTime/60));
+        // processes inserts, deletes and updates to the database; method depends
+        // on the type of stream
+        mgdStream.close();
+
+        //  process merges and splits - note: all adds and updates must
+        // already be processed (mgdstream must already be closed).
+        if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
+          logger.logdInfo("Processing Merge/Splits", true);
+          mergeSplitProcessor.process(mergeSplitScriptWriter);
+          mergeSplitScriptWriter.execute();
+          logger.logdInfo("Finished processing Merge/Splits", true);
+
+          // close the repeat sequence writer
+          try {
+            repeatSeqWriter.close();
+          }
+          catch (IOException e) {
+            SeqloaderException e1 =
+                (SeqloaderException) eFactory.getException(
+                SeqloaderExceptionFactory.RepeatFileIOException, e);
+            throw e1;
+          }
+        }
+        // Close rdrStream after all qc reporting has been done - Note that
+        // mergeSplitProcessor does qc reporting
+        logger.logdInfo("Closing rdrStream", false);
+        rdrStream.close();
+
+        // report Sequence processing statistics
+        logger.logdInfo("Total RefSeqloader.load() time in seconds: " + totalLoadTime +
+                         " time in minutes: " + (totalLoadTime/60), true);
 
         // report Sequence Lookup execution times
         seqCtr = passedCtr + errCtr;
-        logger.logdDebug("Total Valid Sequences Processed = " + seqCtr + " and " + errCtr + " had errors");
-        logger.logdDebug("Average Processing Time/Sequence = " + (totalLoadTime / seqCtr));
+        logger.logdInfo("Total Valid Sequences Processed = " + seqCtr + " and " + errCtr + " had errors", false);
+        logger.logdInfo("Average Processing Time/Sequence = " + (totalLoadTime / seqCtr),false);
         if (seqCtr > 0) {
-          logger.logdDebug("Average SequenceLookup time = " +
-                           (seqProcessor.runningLookupTime / seqCtr));
+          logger.logdInfo("Average SequenceLookup time = " +
+                           (seqProcessor.runningLookupTime / seqCtr), false);
 
           logger.logdDebug("Greatest SequenceLookup time = " + seqProcessor.highLookupTime);
           logger.logdDebug("Least SequenceLookup time = " + seqProcessor.lowLookupTime);
@@ -461,43 +483,37 @@ public class RefSeqloader {
           logger.logdDebug("Least MSProcessor time = " + seqProcessor.lowMSPTime);
           // report free memory average
           logger.logdDebug("Average Free Memory = " + runningFreeMemory / seqCtr);
-          logger.logdDebug("Organism Decider Counts:");
+          logger.logdInfo("Organism Decider Counts:", false);
         }
         Vector deciderCts = organismChecker.getDeciderCounts();
         for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-            logger.logdDebug((String)i.next());
+            logger.logdInfo((String)i.next(), false);
         }
-        logger.logdDebug("Prefix Decider Counts:");
+        logger.logdInfo("Prefix Decider Counts:", false);
         deciderCts = prefixChecker.getDeciderCounts();
         for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-            logger.logdDebug((String)i.next());
+            logger.logdInfo((String)i.next(), false);
         }
 
-        logger.logdDebug("Processing Merge/Splits");
+        logger.logdInfo("Processing Merge/Splits", true);
         // Process merges and splits if we have a MergeSplitProcessor
         if(mergeSplitProcessor != null) {
               mergeSplitProcessor.process(mergeSplitScriptWriter);
               mergeSplitScriptWriter.execute();
         }
-        logger.logdDebug("Finished processing Merge/Splits");
+        logger.logdInfo("Finished processing Merge/Splits", true);
 
-        // processes inserts, deletes and updates to the database; method depends
-        // on the type of stream
-        mgdStream.close();
+        // report Event counts for sequences processed - Note that all
+        // Merge and Split events are also other events. e.g. if two sequences
+        // are merged into one new sequence than there will be an add
+        // event and two merge events. If a sequence is merged into an existing
+        // sequence then there will be an update event and one merge event.
+        // if a sequence is split into two new sequences then there will be two
+        // add events and one split event.
 
-        // process qc inserts to the radar database
-        rdrStream.close();
-        if (loadMode.equals(SeqloaderConstants.INCREM_LOAD_MODE)) {
-            // close the repeat sequence writer
-            try {
-              repeatSeqWriter.close();
-            }
-            catch (IOException e) {
-              SeqloaderException e1 =
-                  (SeqloaderException) eFactory.getException(
-                      SeqloaderExceptionFactory.RepeatFileIOException, e);
-              throw e1;
-          }
+        Vector eventReports = seqProcessor.getProcessedReport();
+        for(Iterator i = eventReports.iterator(); i.hasNext();) {
+              logger.logdInfo((String)i.next(), false);
         }
     }
 }
