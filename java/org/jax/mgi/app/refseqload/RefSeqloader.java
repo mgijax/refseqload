@@ -433,8 +433,8 @@ public class RefSeqloader {
         loadStopWatch.stop();
         double totalLoadTime = loadStopWatch.time();
 
-        // processes inserts, deletes and updates to the database; method depends
-        // on the type of stream
+        // processes inserts, deletes and updates to mgd
+        logger.logdInfo("Closing mgdStream", false);
         mgdStream.close();
 
         //  process merges and splits - note: all adds and updates must
@@ -461,46 +461,60 @@ public class RefSeqloader {
         logger.logdInfo("Closing rdrStream", false);
         rdrStream.close();
 
-        // report Sequence processing statistics
+        /**
+        * report Sequence processing statistics
+        */
+
         logger.logdInfo("Total RefSeqloader.load() time in seconds: " + totalLoadTime +
                          " time in minutes: " + (totalLoadTime/60), true);
+         logger.logpInfo("Total RefSeqloader.load() time in seconds: " + totalLoadTime +
+                         " time in minutes: " + (totalLoadTime/60), true);
 
-        // report Sequence Lookup execution times
         seqCtr = passedCtr + errCtr;
-        logger.logdInfo("Total Valid Sequences Processed = " + seqCtr + " and " + errCtr + " had errors", false);
-        logger.logdInfo("Average Processing Time/Sequence = " + (totalLoadTime / seqCtr),false);
+        logger.logdInfo("Total Sequences Processed = " + seqCtr + " (" + errCtr +
+                        " skipped because of errors or repeated sequences)", false);
+        logger.logpInfo("Total Sequence Processed = " + seqCtr + " (" + errCtr +
+                        " skipped because of errors or repeated sequences)", false);
+
+        logger.logdInfo("Average Processing Time/Sequence = " +
+                        (totalLoadTime / seqCtr),false);
+
         if (seqCtr > 0) {
-          logger.logdInfo("Average SequenceLookup time = " +
+          logger.logdDebug("Average SequenceLookup time = " +
                            (seqProcessor.runningLookupTime / seqCtr), false);
 
-          logger.logdDebug("Greatest SequenceLookup time = " + seqProcessor.highLookupTime);
-          logger.logdDebug("Least SequenceLookup time = " + seqProcessor.lowLookupTime);
+          logger.logdDebug("Greatest SequenceLookup time = " +
+                           seqProcessor.highLookupTime);
+          logger.logdDebug("Least SequenceLookup time = " +
+                           seqProcessor.lowLookupTime);
+
           // report MSProcessor execution times
           logger.logdDebug("Average MSProcessor time = " +
                          (seqProcessor.runningMSPTime / seqCtr));
-          logger.logdDebug("Greatest MSProcessor time = " + seqProcessor.highMSPTime);
-          logger.logdDebug("Least MSProcessor time = " + seqProcessor.lowMSPTime);
+          logger.logdDebug("Greatest MSProcessor time = " +
+                           seqProcessor.highMSPTime);
+          logger.logdDebug("Least MSProcessor time = " +
+                           seqProcessor.lowMSPTime);
           // report free memory average
           logger.logdDebug("Average Free Memory = " + runningFreeMemory / seqCtr);
-          logger.logdInfo("Organism Decider Counts:", false);
         }
+        logger.logdInfo("Organism Decider Counts:", false);
+        logger.logpInfo("Organism Decider Counts:", false);
+
         Vector deciderCts = organismChecker.getDeciderCounts();
         for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-            logger.logdInfo((String)i.next(), false);
+            String line = (String) i.next();
+           logger.logdInfo( line, false);
+           logger.logpInfo( line, false);
         }
+
         logger.logdInfo("Prefix Decider Counts:", false);
         deciderCts = prefixChecker.getDeciderCounts();
         for (Iterator i = deciderCts.iterator(); i.hasNext();) {
-            logger.logdInfo((String)i.next(), false);
+            String line = (String) i.next();
+            logger.logdInfo( line, false);
+            logger.logpInfo( line, false);
         }
-
-        logger.logdInfo("Processing Merge/Splits", true);
-        // Process merges and splits if we have a MergeSplitProcessor
-        if(mergeSplitProcessor != null) {
-              mergeSplitProcessor.process(mergeSplitScriptWriter);
-              mergeSplitScriptWriter.execute();
-        }
-        logger.logdInfo("Finished processing Merge/Splits", true);
 
         // report Event counts for sequences processed - Note that all
         // Merge and Split events are also other events. e.g. if two sequences
@@ -512,7 +526,10 @@ public class RefSeqloader {
 
         Vector eventReports = seqProcessor.getProcessedReport();
         for(Iterator i = eventReports.iterator(); i.hasNext();) {
-              logger.logdInfo((String)i.next(), false);
+            String line = (String)i.next();
+            logger.logpInfo(line, false);
+            logger.logdInfo(line, false);
+
         }
     }
 }
