@@ -111,91 +111,131 @@ echo "database:${MGD_DBNAME}"
 shutDown ()
 {
     #
-    #  End the job stream if a new job key was successfully obtained.
-    #  The STAT variable will contain the return status from the data
-    #  provider loader or the clone loader.
+    # call DLA library function
     #
-    if [ ${JOBKEY} -gt 0 ]
-    then
-        echo "End the job stream" >> ${LOG_PROC}
-        ${JOBEND_CSH} ${RADAR_DBSCHEMADIR} ${JOBKEY} ${STAT}
-    fi
-    #
-    #  End the log files.
-    #
-    stopLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
+    postload
 
     #
     #  Mail the logs to the support staff.
     #
     if [ "${MAIL_LOG_PROC}" != "" ]
     then
-        mailLog ${MAIL_LOG_PROC} "RefSeq Load - Process Summary Log" ${LOG_PROC} | tee -a ${LOG}
+        mailLog ${MAIL_LOG_PROC} "RefSeq Load - Process Summary Log" \
+	    ${LOG_PROC} | tee -a ${LOG}
     fi
 
     if [ "${MAIL_LOG_CUR}" != "" ]
     then
-        mailLog ${MAIL_LOG_CUR} "RefSeq Load - Curator Summary Log" ${LOG_CUR} | tee -a ${LOG}
+        mailLog ${MAIL_LOG_CUR} "RefSeq Load - Curator Summary Log" \
+	    ${LOG_CUR} | tee -a ${LOG}
     fi
 }
 
+#
+# Function that runs to java load
+#
+
+run ()
+{
+    #
+    # log time and input files to process
+    #
+    echo "\n`date`" >> ${LOG_PROC}
+    echo "Files from stdin: ${CAT_METHOD} ${PIPED_INFILES}" | tee -a ${LOG_DIAG} 
+    #
+    # run refseqload
+    #
+    ${CAT_METHOD}  ${PIPED_INFILES}  | \
+	${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
+	-DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} ${REFSEQLOAD_APP} | \
+	tee -a  ${LOGDIR}/stdouterr
+
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+	echo "refseqload processing failed.  \
+	    Return status: ${STAT}" >> ${LOG_PROC}
+	shutDown
+	exit 1
+    fi
+}
+
+##################################################################
+# main
+##################################################################
 
 #
-#  Archive the log and report files from the previous run.
+# createArchive, startLog, getConfigEnv, get job key
 #
-createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+preload
 
 #
-#  Initialize the log files.
+# need to partition if these tables are empty
 #
-startLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
-
-#
-#  Write the configuration information to the log files.
-#
-getConfigEnv >> ${LOG_PROC}
-getConfigEnv -e >> ${LOG_DIAG}
-echo "Files from stdin: ${CAT_METHOD} ${PIPED_INFILES}" >> ${LOG_DIAG}
-
-#
-#  Start a new job stream and get the job stream key.
-#
-echo "Start a new job stream" >> ${LOG_PROC}
-JOBKEY=`${JOBSTART_CSH} ${RADAR_DBSCHEMADIR} ${JOBSTREAM}`
-if [ $? -ne 0 ]
-then
-    echo "Could not start a new job stream for this load" >> ${LOG_PROC}
-    shutDown
-    exit 1
-fi
-echo "JOBKEY=${JOBKEY}" >> ${LOG_PROC}
-
-#
-#  Run refseqload
-#
-echo "\n`date`" >> ${LOG_PROC}
-
-#echo 'Partitioning ACC_Accession, SEQ_Sequence, SEQ_Source_Assoc'
+echo 'Partitioning ACC_Accession, SEQ_Sequence, SEQ_Source_Assoc'
 ${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
 
-echo "${CAT_METHOD} ${PIPED_INFILES}"
+#
+# run the load
+#
+run
 
-${CAT_METHOD} ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} ${REFSEQLOAD_APP} | tee ${LOGDIR}/stdouterr
-#| tee ${LOGDIR}/refseqloadProfile.txt
+#
+# run any repeat files if configured to do so
+#
+if [ ${PROCESS_REPEATS} = true ]
+then
+    while [ -s ${SEQ_REPEAT_FILE} ]
+    # while repeat file exists and is not length 0
+    do
+	# rename the repeat file
+	mv ${SEQ_REPEAT_FILE} ${REPEAT_TO_PROCESS}
 
-#-Xrunhprof:file=${LOGDIR}/refseqloadProfile.txt,format=b ${REFSEQLOAD_APP}
+	# set the cat method
+	CAT_METHOD=/usr/bin/cat
 
+	# set the input file name
+	PIPED_INFILES=${REPEAT_TO_PROCESS}
+
+	# run the load
+	run
+
+	# remove the repeat file we just ran
+	echo "Removing ${REPEAT_TO_PROCESS}"
+	rm ${REPEAT_TO_PROCESS}
+    done
+
+fi
+
+#
+# run msp qc reports
+#
+${MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "refseqload failed.  Return status: ${STAT}" >> ${LOG_PROC}
+    echo "Running MSP QC reports failed.  Return status: ${STAT}" >> ${LOG_PROC}
     shutDown
     exit 1
 fi
-echo "refseqload completed successfully" >> ${LOG_PROC}
 
+#
+# run seqload qc reports
+#
+${SEQLOAD_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    echo "Running seqloader QC reports failed.  Return status: ${STAT}" >> ${LOG_PROC}
+    shutDown
+    exit 1
+fi
+
+#
+# run postload cleanup and email logs
+#
 shutDown
 
 exit 0
