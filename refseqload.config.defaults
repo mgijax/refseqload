@@ -165,17 +165,16 @@ CAT_METHOD="/usr/local/bin/gunzip -c"
 export INFILE_NAME PIPED_INFILES CAT_METHOD
 
 # true = regex matching for finding record delim is turned on
-INFILE_USE_REGEX=true
+INFILE_USE_REGEX=false
 
 # GenBank sequence record regex begin and end delimiter
-INFILE_BEGIN_DELIMITER="^LOCUS"
-INFILE_END_DELIMITER="^ORIGIN"
+#INFILE_BEGIN_DELIMITER="^LOCUS"
+#INFILE_END_DELIMITER="^ORIGIN"
 
 # GenBank sequence record String begin and end delimiter
-# Note: Using string delims causes first record to be skipped if
-# there is not a header
-#INFILE_BEGIN_DELIMITER=\nLOCUS
-#INFILE_END_DELIMITER=\nORIGIN
+# begin is LOCUS followed by 7 spaces
+INFILE_BEGIN_DELIMITER="LOCUS       "
+INFILE_END_DELIMITER=\nORIGIN
 
 export INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER INFILE_USE_REGEX
 
