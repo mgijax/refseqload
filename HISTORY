@@ -1,3 +1,10 @@
+TAG: refseqload-tr6392-1
+DATE: 12/07/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: TR6392
+1) refseqload.sh - added ${SEQ_PROVIDER} to call to logProcessedFile.csh
+
 TAG: refseqload-1-0-11
 DATE: 07/14/2004
 STAFF: sc
