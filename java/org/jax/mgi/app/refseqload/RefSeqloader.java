@@ -373,23 +373,7 @@ public class RefSeqloader {
           // or PubMed
 
           try {
-            if (loadMode.equals(SeqloaderConstants.INCREM_INITIAL_LOAD_MODE)) {
-                seqProcessor.processInput(si);
-            }
-            else {
               seqProcessor.processInput(si);
-            }
-
-            //DEBUG
-            seqCtr = passedCtr + errCtr;
-            currentFreeMemory = runTime.freeMemory();
-            runningFreeMemory = runningFreeMemory + currentFreeMemory;
-            if (seqCtr  > 0 && seqCtr % 1000 == 0) {
-                logger.logdInfo("Processed " + seqCtr + " input records", false);
-                //System.gc();
-                //logger.logdInfo("Total Memory Available to the VM: " + runTime.totalMemory(), false);
-                //logger.logdInfo("Free Memory Available: " + currentFreeMemory, false);
-            }
           }
           // if we can't resolve SEQ_Sequence attributes, go to the next
           // sequence
@@ -432,15 +416,16 @@ public class RefSeqloader {
                errCtr++;
                continue;
           }
-          // log changed library, go to next sequence
-          catch (ChangedLibraryException e) {
-              String message = e.getMessage() + " Sequence: " +
-                   si.getPrimaryAcc().getAccID();
-               logger.logdInfo(message, true);
-               logger.logcInfo(message, true);
+          // DEBUG
+          currentFreeMemory = runTime.freeMemory();
+          // runningFreeMemory = runningFreeMemory + currentFreeMemory;
 
-               errCtr++;
-               continue;
+          seqCtr = passedCtr + errCtr;
+          if (seqCtr  > 0 && seqCtr % 1000 == 0) {
+              logger.logdInfo("Processed " + seqCtr + " input records", false);
+              //System.gc();
+              //logger.logdInfo("Total Memory Available to the VM: " + runTime.totalMemory(), false);
+              //logger.logdInfo("Free Memory Available: " + currentFreeMemory, false);
           }
 
           passedCtr++;
