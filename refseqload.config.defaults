@@ -89,7 +89,7 @@ export JOBSTART_CSH JOBEND_CSH
 ###########################################################################
 
 #  Java applications
-REFSEQLOAD_APP=org.jax.mgi.app.refseqloader.RefSeqloader
+REFSEQLOAD_APP=org.jax.mgi.app.refseqload.RefSeqloader
 
 #  loader shell script
 REFSEQLOAD_SH=${INSTALLDIR}/bin/refseqload.sh
