@@ -166,6 +166,12 @@ APP_RADAR_MAX=500000000
 
 export INFILE_BUFFERSIZE SEQ_LOAD_MODE APP_RADAR_MAX APP_RADAR_INPUT
 
+# number of existing sequences to batch before processing
+# max is 400!
+SEQ_QUERY_BATCHSIZE=400
+
+export SEQ_QUERY_BATCHSIZE
+
 # true if a virtual (computationally derived) sequence
 SEQ_VIRTUAL=false
 
