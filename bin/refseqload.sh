@@ -123,38 +123,38 @@ shutDown ()
     #
     #  End the log files.
     #
-#    stopLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
+    stopLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
 
     #
     #  Mail the logs to the support staff.
     #
-#    if [ "${MAIL_LOG_PROC}" != "" ]
-#    then
-#        mailLog ${MAIL_LOG_PROC} "RefSeq Load - Process Summary Log" ${LOG_PROC} | tee -a ${LOG}
-#    fi
+    if [ "${MAIL_LOG_PROC}" != "" ]
+    then
+        mailLog ${MAIL_LOG_PROC} "RefSeq Load - Process Summary Log" ${LOG_PROC} | tee -a ${LOG}
+    fi
 
-#    if [ "${MAIL_LOG_CUR}" != "" ]
-#    then
-#        mailLog ${MAIL_LOG_CUR} "RefSeq Load - Curator Summary Log" ${LOG_CUR} | tee -a ${LOG}
-#    fi
+    if [ "${MAIL_LOG_CUR}" != "" ]
+    then
+        mailLog ${MAIL_LOG_CUR} "RefSeq Load - Curator Summary Log" ${LOG_CUR} | tee -a ${LOG}
+    fi
 }
 
 
 #
 #  Archive the log and report files from the previous run.
 #
-#createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
 
 #
 #  Initialize the log files.
 #
-#startLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
+startLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
 
 #
 #  Write the configuration information to the log files.
 #
-#getConfigEnv >> ${LOG_PROC}
-#getConfigEnv -e >> ${LOG_DIAG}
+getConfigEnv >> ${LOG_PROC}
+getConfigEnv -e >> ${LOG_DIAG}
 
 #
 #  Start a new job stream and get the job stream key.
@@ -179,7 +179,7 @@ ${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
 
-cat ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} -Xloggc:${LOGDIR}/refseqloadGCStatus.txt -Xprof ${REFSEQLOAD_APP} | tee ${LOGDIR}/refseqloadProfile.txt
+gunzip -c ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} -Xloggc:${LOGDIR}/refseqloadGCStatus.txt -Xprof ${REFSEQLOAD_APP} | tee ${LOGDIR}/refseqloadProfile.txt
 
 #-Xrunhprof:file=${LOGDIR}/refseqloadProfile.txt,format=b ${REFSEQLOAD_APP}
 
