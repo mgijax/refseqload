@@ -1,3 +1,10 @@
+TAG: refseqload-1-0-1
+DATE: 03/18/04
+STAFF: sc
+RELEASE: dev
+CHANGES: 
+1) added qc and merge/split script writers 
+
 TAG: refseqload-1-0-0 
 DATE: 03/09/04
 STAFF: sc
