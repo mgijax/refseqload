@@ -1,3 +1,10 @@
+refseqload-assembly-4
+DATE: 11/19/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: tr6336 
+1) refseqload.config.default - new common config vars
+
 TAG: refseqload-assembly-3
 TAG: refseqload-assembly-2
 TAG: refseqload-assembly-1
