@@ -66,6 +66,7 @@ fi
 if [ -r ${CONFIG_REFSEQLOAD} ]
 then
     . ${CONFIG_REFSEQLOAD}
+    echo $CLASSPATH
 else
     echo "Cannot read configuration file: ${CONFIG_REFSEQLOAD}"
     install_failed
@@ -114,6 +115,17 @@ then
 fi
 
 #
+#  Verify that the MGD_BCP_PATH directory has been defined.
+#
+if [ "${MGD_BCP_PATH}" = "" ]
+then
+    echo "Environment variable MGD_BCP_PATH has not been defined."
+    echo "It should be set to the directory where input files reside and"
+    echo "bcp files are created."
+    install_failed
+fi
+
+#
 #  Verify that the LOGS directory has been defined.
 #
 if [ "${LOGDIR}" = "" ]
@@ -136,7 +148,7 @@ fi
 #
 #  Make the required directories if they don't already exist.
 #
-for i in ${FILEDIR} ${ARCHIVEDIR} ${DATADIR} ${LOGDIR} ${RPTDIR}
+for i in ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
 do
     if [ ! -d ${i} ]
     then
@@ -157,7 +169,7 @@ done
 #  Set permissions on installed directories and files.
 #
 echo "Set permissions on installed directories and files"
-chmod -f 755 ${FILEDIR} ${ARCHIVEDIR} ${DATADIR} ${LOGDIR} ${RPTDIR}
+chmod -f 755 ${FILEDIR} ${ARCHIVEDIR} ${MGD_BCP_PATH} ${LOGDIR} ${RPTDIR}
 chmod -f 750 bin system_docs
 chmod -f 640 refseqload.config* build.xml
 chmod -f 644 ${INDEXFILE}
