@@ -170,9 +170,15 @@ run ()
 ##################################################################
 
 #
-# createArchive, startLog, getConfigEnv, get job key
+# createArchive including OUTPUTDIR, startLog, getConfigEnv, get job key
 #
-preload
+preload ${OUTPUTDIR}
+
+
+#
+# rm all files/dirs from OUTPUTDIR and RPTDIR
+#
+cleanDir ${OUTPUTDIR} ${RPTDIR}
 
 # if we are processing the non-cums (incremental mode)
 # get a set of files, 1 file or set < configured value in MB (compressed)
