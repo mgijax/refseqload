@@ -21,11 +21,15 @@ INSTALLDIR=/usr/local/mgi/3.0/dataload/refseqload
 DBUTILSDIR=/usr/local/mgi/3.0/dbutils/mgidbutilities
 #DBUTILSDIR=/home/sc/jsam/mgidbutilities
 
+# Installation directory for the radar dbutilites product
+RADARDBUTILSDIR=/usr/local/mgi/3.0/dbutils/radardbutilities
+#RADARDBUTILSDIR=/home/sc/jsam/radardbutilities 
+
 #  Installation directory for the QC report product
 QCRPTDIR=/usr/local/mgi/3.0/qcreports_db
 #QCRPTDIR=/home/sc/jsam/qcreports_db
 
-export INSTALLDIR DBUTILSDIR QCRPTDIR
+export INSTALLDIR DBUTILSDIR RADARDBUTILSDIR QCRPTDIR
 
 ###########################################################################
 #
@@ -78,10 +82,10 @@ CLASSPATH=.:${INSTALLDIR}/refseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
 #CLASSPATH=.:/home/sc/jsam/refseqload/classes:/home/sc/jsam/lib_java_core/classes:/home/sc/jsam/lib_java_dbsmgd/classes:/home/sc/jsam/lib_java_dbsrdr/classes:/home/sc/jsam/lib_java_dla/classes:${JAVA_HOME}/jre/lib/rt.jar:/opt/sybase/12.5/jConnect-5_5/classes/jconn2.jar
 
-DLAFUNCTIONS=${DBUTILSDIR}/bin/DLAfunctions.sh
+DLAFUNCTIONS=${RADARDBUTILSDIR}/bin/DLAfunctions.sh
 
-JOBSTART_CSH=${DBUTILSDIR}/bin/startJobStream.csh
-JOBEND_CSH=${DBUTILSDIR}/bin/endJobStream.csh
+JOBSTART_CSH=${RADARDBUTILSDIR}/bin/startJobStream.csh
+JOBEND_CSH=${RADARDBUTILSDIR}/bin/endJobStream.csh
 
 export JAVA_HOME JAVA_RUN JAVARUNTIMEOPTS CLASSPATH DLAFUNCTIONS
 export JOBSTART_CSH JOBEND_CSH
