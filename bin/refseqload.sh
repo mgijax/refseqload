@@ -155,6 +155,7 @@ startLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
 #
 getConfigEnv >> ${LOG_PROC}
 getConfigEnv -e >> ${LOG_DIAG}
+echo "Files from stdin: ${CAT_METHOD} ${PIPED_INFILES}" >> ${LOG_DIAG}
 
 #
 #  Start a new job stream and get the job stream key.
@@ -179,8 +180,10 @@ ${MGD_DBSCHEMADIR}/partition/ACC_Accession_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Sequence_create.object
 ${MGD_DBSCHEMADIR}/partition/SEQ_Source_Assoc_create.object
 
-#gunzip -c 
-gunzip -c ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} -Xloggc:${LOGDIR}/refseqloadGCStatus.txt -Xprof ${REFSEQLOAD_APP} | tee ${LOGDIR}/refseqloadProfile.txt
+echo "${CAT_METHOD} ${PIPED_INFILES}"
+
+${CAT_METHOD} ${PIPED_INFILES} | ${JAVA_RUN} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} -DCONFIG=${CONFIG_REFSEQLOAD} -DJOBKEY=${JOBKEY} ${REFSEQLOAD_APP} | tee ${LOGDIR}/stdouterr
+#| tee ${LOGDIR}/refseqloadProfile.txt
 
 #-Xrunhprof:file=${LOGDIR}/refseqloadProfile.txt,format=b ${REFSEQLOAD_APP}
 
