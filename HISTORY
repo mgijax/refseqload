@@ -1,8 +1,17 @@
+TAG: refseqload-1-0-10
+DATE: 07/09/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: TR5916, TR5986
+1) refseqload.config.defaults - Added MAIL_LOADNAME
+2) bin/refseqload.sh - removed call to mailLog - handled by postload now
+3) misc javadoc corrections
+
 TAG: refseqload-1-0-9
 DATE: 06/30/2004
 STAFF: sc
-RELEASE: prod
-CHANGES:
+RELEASE: dev 
+CHANGES: TR5916, TR5986
 1) refseqload.config.defaults - reversed prefixing for update and mergeSplit
    SCP vars. DLALoader looks for unprefixed vars to create the update script.
    Added DLA_DB_PREFIX=MGD even though this is the default value - just to make
