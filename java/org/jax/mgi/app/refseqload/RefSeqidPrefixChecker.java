@@ -177,10 +177,11 @@ public class RefSeqidPrefixChecker {
             }
 
         }
+        /*
         if (isA == false) {
             logger.logdDebug("Not a valid record: " + record, true);
         }
-
+        */
         return isA;
       }
 
