@@ -1,4 +1,11 @@
-AG: refseqload-1-0-6
+TAG: refseqload-1-0-7
+DATE: 06/08/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:
+1) refseqload.config.defaults - updated to process incrementals
+
+TAG: refseqload-1-0-6
 DATE: 06/08/2004
 STAFF: sc
 RELEASE: prod
