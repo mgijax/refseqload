@@ -3,7 +3,8 @@ STAFF: sc
 CHANGES:
 1) index.html - added correct path to QC_MS_UnresolvedOrganism.rpt
 2) RefSeqloader - removed catch of ChangedLibraryException
-3) refseqload.config.defaults - updated for the release
+3) refseqload.config.defaults - updated for the release, turned radar bcp
+   autoflush on.
 
 DATE: 05/07/2004
 STAFF: sc
