@@ -1,9 +1,11 @@
+TAG: refseqload-1-0-8
 TAG: refseqload-1-0-7
 DATE: 06/08/2004
 STAFF: sc
 RELEASE: prod
 CHANGES:
 1) refseqload.config.defaults - updated to process incrementals
+2) index.html - fixed typo in path to input files
 
 TAG: refseqload-1-0-6
 DATE: 06/08/2004
