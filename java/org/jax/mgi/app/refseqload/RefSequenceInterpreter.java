@@ -69,7 +69,7 @@ public class RefSequenceInterpreter extends GBFormatInterpreter {
          * @return A SequenceInput object representing 'rcd'
          * @throws RecordFormatException if we can't parse an attribute because of
          *         record formatting errors
-         * @note See http://www.ncbi.nlm.nih.gov/RefSeq/key.html for a key
+         * @notes See http://www.ncbi.nlm.nih.gov/RefSeq/key.html for a key
          * to the RefSeq accession format
          */
         public Object interpret(String rcd) throws RecordFormatException {

@@ -86,10 +86,8 @@ public class RefSeqidPrefixChecker {
     * deciders
     * @assumes nothing
     * @effects nothing
-    * @param deciders A set of predicates to identify a set of organisms
-    * @param provider The sequence provider to determine the regex for
-    *        finding the classification in a sequence record.
-    * @throws An exception if there are no deciders or unsupported provider
+    * @throws ConfigException if error accessing Configuration
+    * @throws DLALoggingException if error getting a logger
     */
 
     public RefSeqidPrefixChecker () throws ConfigException, DLALoggingException {
@@ -148,7 +146,6 @@ public class RefSeqidPrefixChecker {
     * represented by the set of deciders
     * @assumes Nothing
     * @effects Nothing
-    * @param None
     * @return true if sequence record prefix is represented by one of
     *         the deciders.
     * @throws Nothing
@@ -195,7 +192,6 @@ public class RefSeqidPrefixChecker {
     *  returned true and the count of records for which each decider returned true.
     * @assumes Nothing
     * @effects Nothing
-    * @param None
     * @return Vector of Strings, each String contains the decider name
     *         and the count of records for which the decider returned true
     * @throws Nothing

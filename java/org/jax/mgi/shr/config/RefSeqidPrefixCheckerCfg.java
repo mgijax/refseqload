@@ -29,7 +29,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Constructs a configurator for a RefSeqidPrefixChecker object
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @throws ConfigException if a configuration manager cannot be obtained
      */
 
@@ -41,7 +40,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NM prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NM prefix
      * @throws ConfigException if "NM" not found in configuration file
      */
@@ -54,7 +52,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NR prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NR prefix
      * @throws ConfigException if "NR" not found in configuration file
      */
@@ -66,7 +63,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NP prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NP prefix
      * @throws ConfigException if "NP" not found in configuration file
      */
@@ -79,7 +75,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NC prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NC prefix
      * @throws ConfigException if "NC" not found in configuration file
      */
@@ -92,7 +87,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NG prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NG prefix
      * @throws ConfigException if "NG" not found in configuration file
      */
@@ -105,7 +99,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NT prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NT prefix
      * @throws ConfigException if "NT" not found in configuration file
      */
@@ -118,7 +111,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NW prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NW prefix
      * @throws ConfigException if "NW" not found in configuration file
      */
@@ -131,7 +123,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load NZ prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading NZ prefix
      * @throws ConfigException if "NZ" not found in configuration file
      */
@@ -144,7 +135,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load ZP prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading ZP prefix
      * @throws ConfigException if "ZP" not found in configuration file
      */
@@ -157,7 +147,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load XM prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading XM prefix
      * @throws ConfigException if "XM" not found in configuration file
      */
@@ -170,7 +159,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load XR prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading XR prefix
      * @throws ConfigException if "XR" not found in configuration file
      */
@@ -182,7 +170,6 @@ public class RefSeqidPrefixCheckerCfg extends Configurator {
      * Gets whether to load XP prefixes or not
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return Boolean true if we are loading XP prefix
      * @throws ConfigException if "XP" not found in configuration file
      */
