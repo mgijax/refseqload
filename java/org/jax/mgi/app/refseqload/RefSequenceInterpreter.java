@@ -7,22 +7,20 @@ import java.util.*;
 import java.util.regex.*;
 import java.sql.*;
 
-import org.jax.mgi.shr.dla.seqloader.SequenceInterpreter;
-import org.jax.mgi.shr.dla.seqloader.SequenceInput;
-import org.jax.mgi.shr.dla.seqloader.SeqloaderConstants;
-import org.jax.mgi.shr.dla.seqloader.SeqRefAssocPair;
-import org.jax.mgi.shr.dla.seqloader.DateConverter;
-import org.jax.mgi.shr.dla.seqloader.AccessionRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.RefAssocRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.SequenceRawAttributes;
-import org.jax.mgi.shr.dla.seqloader.GBFormatInterpreter;
-import org.jax.mgi.shr.dla.seqloader.GBOrganismChecker;
+import org.jax.mgi.shr.dla.input.SequenceInterpreter;
+import org.jax.mgi.shr.dla.input.SequenceInput;
+import org.jax.mgi.shr.dla.loader.seq.SeqloaderConstants;
+import org.jax.mgi.dbs.mgd.loads.SeqRefAssoc.SeqRefAssocPair;
+import org.jax.mgi.shr.dla.input.DateConverter;
+import org.jax.mgi.dbs.mgd.loads.Acc.AccessionRawAttributes;
+import org.jax.mgi.dbs.mgd.loads.SeqRefAssoc.RefAssocRawAttributes;
+import org.jax.mgi.dbs.mgd.loads.Seq.SequenceRawAttributes;
+import org.jax.mgi.shr.dla.input.genbank.GBFormatInterpreter;
+import org.jax.mgi.shr.dla.input.genbank.GBOrganismChecker;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.ioutils.RecordFormatException;
-import org.jax.mgi.shr.dla.DLALoggingException;
 import org.jax.mgi.shr.stringutil.StringLib;
-import org.jax.mgi.dbs.mgd.MolecularSource.MSRawAttributes;
-
+import org.jax.mgi.dbs.mgd.loads.SeqSrc.MSRawAttributes;
 
     /**
      * @is An object that parses a GenBank sequence record and obtains values
@@ -54,7 +52,7 @@ public class RefSequenceInterpreter extends GBFormatInterpreter {
         private RefSeqidPrefixChecker prefixChecker;
 
         public RefSequenceInterpreter(GBOrganismChecker oc, RefSeqidPrefixChecker pc)
-            throws ConfigException, DLALoggingException {
+            throws ConfigException {
             super(oc);
             prefixChecker = pc;
         }

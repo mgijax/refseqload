@@ -4,9 +4,9 @@
 package org.jax.mgi.app.refseqload;
 
 import org.jax.mgi.shr.timing.Stopwatch;
-import org.jax.mgi.shr.dla.seqloader.GBOrganismChecker;
-import org.jax.mgi.shr.dla.seqloader.SeqLoader;
-import org.jax.mgi.shr.dla.genbank.GBInputFile;
+import org.jax.mgi.shr.dla.input.genbank.GBOrganismChecker;
+import org.jax.mgi.shr.dla.loader.seq.SeqLoader;
+import org.jax.mgi.shr.dla.input.genbank.GBInputFile;
 import org.jax.mgi.shr.exception.MGIException;
 import java.util.Vector;
 import java.util.Iterator;

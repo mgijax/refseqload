@@ -1,9 +1,36 @@
+TAG: refseqload-3-1-0-1
+DATE: 12/08/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: TR6265 - merge assembly branch to trunk
+
 TAG: refseqload-1-0-14
 DATE: 12/07/2004
 STAFF: sc
 RELEASE: prod
 CHANGES: TR6392 - copied from refseqload-tr6392 branch 
 1) refseqload.sh - added ${SEQ_PROVIDER} to call to logProcessedFile.csh
+
+DATE: 11/30/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: refseqload.config.default - added value to INPUTDIR
+
+refseqload-assembly-4
+DATE: 11/19/2004
+STAFF: sc
+RELEASE: prod
+CHANGES: tr6336 
+1) refseqload.config.default - new common config vars
+
+TAG: refseqload-assembly-3
+TAG: refseqload-assembly-2
+TAG: refseqload-assembly-1
+DATE: 11/17/2004
+STAFF: sc
+RELEASE: prod
+CHANGES:
+1) TR6047 - lib_java_dla refactoring
 
 TAG: refseqload-assembly-BP
 DATE: 11/17/2004

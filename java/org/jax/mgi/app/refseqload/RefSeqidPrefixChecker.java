@@ -6,17 +6,13 @@ package org.jax.mgi.app.refseqload;
 import java.util.*;
 import java.util.regex.*;
 
-import org.jax.mgi.shr.dla.seqloader.SeqDecider;
-import org.jax.mgi.shr.dla.seqloader.SeqloaderConstants;
+import org.jax.mgi.shr.dla.input.SeqDecider;
+import org.jax.mgi.shr.dla.loader.seq.SeqloaderConstants;
 import org.jax.mgi.shr.config.RefSeqidPrefixCheckerCfg;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.exception.MGIException;
-import org.jax.mgi.shr.dla.DLALogger;
-import org.jax.mgi.shr.dla.DLAException;
-import org.jax.mgi.shr.dla.DLAExceptionHandler;
-
-// DEBUG
-import org.jax.mgi.shr.dla.DLALoggingException;
+import org.jax.mgi.shr.dla.log.DLALogger;
+import org.jax.mgi.shr.dla.log.DLALoggingException;
 
 /**
  * @is An object that, given a GenBank format sequence record and a set of
