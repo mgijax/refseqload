@@ -67,11 +67,10 @@ export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR
 JAVA_HOME=/usr/j2se
 JAVA_RUN=${JAVA_HOME}/bin/java
 
-# allow 1.5 initial and max heap memory - note this is the max for which
-# the loader will run since child processes (e.g. isql exec of sql files)
-# need memory from the parent process (2G max given to a process by the op sys)
+# allow 2G memory limit in initial mode
+# 1.5 G in incremental mode
 JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
-
+#JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 
 JAVA_LIB=/usr/local/mgi/3.0/lib/java1.4/dla.jar:/usr/local/mgi/3.0/lib/java1.4/core.jar:/usr/local/mgi/3.0/lib/java1.4/dbsmgd.jar:/usr/local/mgi/3.0/lib/java1.4/dbsrdr.jar
 
@@ -124,6 +123,9 @@ INFILE_NAME=STDIN
 # list of files to pipe to application
 PIPED_INFILES="${DATADIR}/vertebrate*protein*gz ${DATADIR}/vertebrate*rna*gz"
 
+# method to cat files to stdin, generally 'cat' or 'gunzip -c'
+CAT_METHOD="/usr/local/bin/gunzip -c"
+
 # RefSeq sequence record regex end delimiter
 #INFILE_END_DELIMITER="^//"
 
@@ -150,28 +152,28 @@ INFILE_BUFFERSIZE=21000000
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial doesn't use a MergeSplitProcessor
-LOAD_MODE=incremental_initial
+SEQ_LOAD_MODE=incremental_initial
 
 # path to repeat file; file refseqload writes sequences found more than
 # once in the input
-REPEAT_FILE=${FILEDIR}/data/repeats.out
+SEQ_REPEAT_FILE=${FILEDIR}/data/repeats.out
 
 export INFILE_NAME PIPED_INFILES INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER 
-export INFILE_USE_REGEX INFILE_BUFFERSIZE LOAD_MODE REPEAT_FILE
+export INFILE_USE_REGEX INFILE_BUFFERSIZE SEQ_LOAD_MODE SEQ_REPEAT_FILE
 
 # true if a virtual (computationally derived) sequence
-VIRTUAL=false
+SEQ_VIRTUAL=false
 
 # this load's login value for DB table CreatedBy and ModifiedBy
 JOBSTREAM=refseq_load
 
 # SEQ_Sequence Provider controlled vocab for RefSeq 
-PROVIDER=RefSeq
+SEQ_PROVIDER=RefSeq
 
 # logical db name for this data provider
-LOGICALDB=RefSeq
+SEQ_LOGICALDB=RefSeq
 
-export VIRTUAL JOBSTREAM PROVIDER LOGICALDB
+export SEQ_VIRTUAL JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
 
 # organisms to load
 LOAD_MOUSE=true
