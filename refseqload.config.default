@@ -111,19 +111,19 @@ export APP_SEQ_QCRPT APP_MSP_QCRPT
 FILEDIR=/data/loads/genbank/refseqload
 #FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
 
-# full path to input file directory when APP_RADAR_INPUT=false
-INPUTDIR=
-
 # Full path the the logs, reports, and archive directories
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
 ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
-export FILEDIR INPUTDIR LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
+export FILEDIR LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
 
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
 #  the application.
 INFILE_NAME=STDIN
+
+# full path to input file directory when APP_RADAR_INPUT=false
+INPUTDIR=/data/downloads/ftp.ncbi.nih.gov/refseq/daily
 
 # full path to input files when APP_RADAR_INPUT=false
 APP_INFILES=${INPUTDIR}/...
@@ -131,7 +131,7 @@ APP_INFILES=${INPUTDIR}/...
 # how files are piped to the application
 APP_CAT_METHOD="/usr/local/bin/gunzip -c"
 
-export INFILE_NAME APP_INFILES APP_CAT_METHOD
+export INFILE_NAME INPUTDIR APP_INFILES APP_CAT_METHOD
 
 # true = regex matching for finding record delim is turned on
 INFILE_USE_REGEX=false
