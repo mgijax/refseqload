@@ -155,6 +155,9 @@ INFILE_BUFFERSIZE=21000000
 # incremental_initial doesn't use a MergeSplitProcessor
 SEQ_LOAD_MODE=incremental
 
+# set to false; don't load any references (default is true)
+SEQ_OK_TO_LOAD_REFS=false
+
 # get non-cum input files from RADAR if 'true' and SEQ_LOAD_MODE=
 # incremental
 APP_RADAR_INPUT=true
