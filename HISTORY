@@ -1,3 +1,10 @@
+TAG: refseqload-3-4-1-1
+DATE: 01/06/2006
+STAFF: sc
+RELEASE: prod
+CHANGES: TR7302 don't load refseq refs
+refseqload.config.default - added SEQ_OK_TO_LOAD_REFS=false 
+
 TAG: refseqload-3-1-0-2
 DATE: 01/25/2005
 STAFF: sc
