@@ -189,7 +189,7 @@ then
     # set the input files to empty string
     APP_INFILES=""
 
-    APP_INFILES=`${RADARDBUTILSDIR}/bin/getFilesToProcess.csh \
+    APP_INFILES=`${RADAR_DBUTILS}/bin/getFilesToProcess.csh \
         ${RADAR_DBSCHEMADIR} ${JOBSTREAM} ${SEQ_PROVIDER} ${APP_RADAR_MAX}` 
     STAT=$?
     if [ ${STAT} -ne 0 ]
