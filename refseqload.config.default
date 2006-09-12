@@ -38,7 +38,7 @@ export INSTALLDIR
 
 # 2G memory limit in initial mode
 # 1.5 G in incremental mode
-JAVARUNTIMEOPTS="-Xms1400m -Xmx1400m"
+JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
 
 JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
@@ -61,10 +61,10 @@ FILEDIR=/data/loads/genbank/refseqload
 
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
-ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
+ARCHIVEDIR=${FILEDIR}/archive
 
-export FILEDIR LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
+export FILEDIR LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR
 
 #
 # input file settings
@@ -113,9 +113,12 @@ DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
 
 # SQL STREAM
 # this overrides the default BCP_Inline_Stream
-DLA_DB_PREFIX=MGD
 DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
 DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
+
+# prefix of Configuration variable names for the load database
+# e.g. prefixes DBSERVER, DBNAME, BCP_PATH, etc
+DLA_DB_PREFIX=MGD
 
 #  seqloader QC report shell script
 APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
@@ -123,8 +126,8 @@ APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
 # molecular source processor QC report script
 APP_MSP_QCRPT=${QCRPTS}/msp/runQC.csh
 
-export DLA_LOADER DLA_START DLA_LOAD_STREAM
-export APP_SEQ_QCRPT APP_MSP_QCRPT
+export DLA_LOADER DLA_START DLA_LOAD_STREAM DLA_QC_STREAM
+export DLA_DB_PREFIX APP_SEQ_QCRPT APP_MSP_QCRPT
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial doesn't use a MergeSplitProcessor
@@ -138,11 +141,11 @@ SEQ_OK_TO_LOAD_REFS=false
 APP_RADAR_INPUT=true
 
 # max size of a set of non-cums to process in bytes -
-# 500MB compressed seems to be good
+# 300MB compressed, any higher we get occasional memory exceptions
 # if set to 0, all files will be processed
-APP_RADAR_MAX=400000000
+APP_RADAR_MAX=300000000
 
-export INFILE_BUFFERSIZE SEQ_LOAD_MODE APP_RADAR_MAX APP_RADAR_INPUT
+export SEQ_LOAD_MODE SEQ_OK_TO_LOAD_REFS APP_RADAR_INPUT APP_RADAR_MAX
 
 # number of existing sequences to batch before processing
 # max is 400!
@@ -194,6 +197,7 @@ LOG_CUR=${LOGDIR}/refseqload.cur.log
 LOG_VAL=${LOGDIR}/refseqload.val.log
 
 # Send debug messages to the diagnostic log
+# toggle these to true as needed
 LOG_DEBUG=false
 DBDEBUG=false
 CACHE_DEBUG=false
