@@ -1,20 +1,29 @@
+TAG: refseqload-3-5-1-1
+DATE: 10/24/2006
+STAFF: lec
+CHANGES: merge tr7894 branch
+
+TAG: refseqload-tr7894-3
+TAG: refseqload-tr7894-2
+TAG: refseqload-tr7894-1
+DATE: 10/16/2006
+STAFF: sc
+CHANGES: Updated to use mgiconfig
+
 TAG: refseqload-tr7894-BP
 DATE: 09/08/2006
 STAFF: sc
-RELEASE: 
 CHANGES: Branch point tag for TR7894 - use mgiconfig
 
 TAG: refseqload-3-4-1-1
 DATE: 01/06/2006
 STAFF: sc
-RELEASE: prod
 CHANGES: TR7302 don't load refseq refs
 refseqload.config.default - added SEQ_OK_TO_LOAD_REFS=false 
 
 TAG: refseqload-3-1-0-2
 DATE: 01/25/2005
 STAFF: sc
-RELEASE: prod
 CHANGES: TR6473
 1) refseqload.sh - added date echo before each call to qc reports
 2) refseqload.config.default - added SEQ_QUERY_BATCHSIZE
@@ -22,25 +31,21 @@ CHANGES: TR6473
 TAG: refseqload-3-1-0-1
 DATE: 12/08/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: TR6265 - merge assembly branch to trunk
 
 TAG: refseqload-1-0-14
 DATE: 12/07/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: TR6392 - copied from refseqload-tr6392 branch 
 1) refseqload.sh - added ${SEQ_PROVIDER} to call to logProcessedFile.csh
 
 DATE: 11/30/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: refseqload.config.default - added value to INPUTDIR
 
 refseqload-assembly-4
 DATE: 11/19/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: tr6336 
 1) refseqload.config.default - new common config vars
 
@@ -49,27 +54,23 @@ TAG: refseqload-assembly-2
 TAG: refseqload-assembly-1
 DATE: 11/17/2004
 STAFF: sc
-RELEASE: prod
 CHANGES:
 1) TR6047 - lib_java_dla refactoring
 
 TAG: refseqload-assembly-BP
 DATE: 11/17/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: assembly branch point
 
 TAG: refseqload-1-0-13
 DATE: 11/01/2004
 STAFF: sc
-RELEASE: prod
 CHANGES:TR5395
 1) refseqload.config.default - changed some default values
 
 TAG: refseqload-1-0-12
 DATE:10/25/2004
 STAFF: sc
-RELEASE: prod
 CHANGES:TR5395
 1) refseqload.sh - added param to preload to archive outputdir
     - added call to cleanDir to clean outputdir and rptdir
@@ -77,7 +78,6 @@ CHANGES:TR5395
 
 DATE: 10/12/2004
 STAFF: sc
-RELEASE: dev
 CHANGES: TR5395
 1) index.html - fixed path to a QC report
 2) RefSeqloader - changed name of method getRecordDataIterator() to
@@ -92,7 +92,6 @@ CHANGES:
 TAG: refseqload-1-0-11
 DATE: 07/14/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: TR5985, TR5916, TR5986
 
 DATE: 7/12/2004
@@ -104,7 +103,6 @@ CHANGES:
 TAG: refseqload-1-0-10
 DATE: 07/09/2004
 STAFF: sc
-RELEASE: dev
 CHANGES: TR5916, TR5986
 1) refseqload.config.defaults - Added MAIL_LOADNAME
 2) bin/refseqload.sh - removed call to mailLog - handled by postload now
@@ -113,7 +111,6 @@ CHANGES: TR5916, TR5986
 TAG: refseqload-1-0-9
 DATE: 06/30/2004
 STAFF: sc
-RELEASE: dev 
 CHANGES: TR5916, TR5986
 1) refseqload.config.defaults - reversed prefixing for update and mergeSplit
    SCP vars. DLALoader looks for unprefixed vars to create the update script.
@@ -146,7 +143,6 @@ TAG: refseqload-1-0-8
 TAG: refseqload-1-0-7
 DATE: 06/08/2004
 STAFF: sc
-RELEASE: prod
 CHANGES:
 1) refseqload.config.defaults - updated to process incrementals
 2) index.html - fixed typo in path to input files
@@ -154,7 +150,6 @@ CHANGES:
 TAG: refseqload-1-0-6
 DATE: 06/08/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: 
 1) refseqload.sh - added check to be sure input files defined
 2) see changes since last tag below
@@ -171,13 +166,11 @@ CHANGES:
 TAG: refseqload-1-0-5
 DATE: 05/24/2004
 STAFF: sc
-RELEASE: prod
 CHANGES: index.html - removed library from description of QC_MS_NameConflict.rpt
 
 TAG: refseqload-1-0-4
 DATE: 05/18/2004
 STAFF: sc
-RELEASE: prod 
 CHANGES: See changes below since last tag
 
 DATE: 05/13/2004
@@ -205,13 +198,11 @@ CHANGES:
 
 DATE: 04/30/04
 STAFF: sc
-RELEASE: dev
 CHANGES: index.html - added reports and logs
 
 TAG: refseqload-1-0-3
 DATE: 04/27/04
 STAFF: sc
-RELEASE: dev
 CHANGES: see changes since last tag below
 
 DATE: 04/26/04
@@ -226,7 +217,6 @@ CHANGES:
 TAG: refseqload-1-0-2
 DATE: 04/07/04
 STAFF: sc
-RELEASE: dev
 CHANGES:
 1) RefSeqloader.java - moved some logging around. Added some log proc logging
 2) refseqload.config.defaults - added CAT_METHOD
@@ -235,13 +225,11 @@ CHANGES:
 TAG: refseqload-1-0-1
 DATE: 03/18/04
 STAFF: sc
-RELEASE: dev
 CHANGES: 
 1) added qc and merge/split script writers 
 
 TAG: refseqload-1-0-0 
 DATE: 03/09/04
 STAFF: sc
-RELEASE: dev
 CHANGES: initial tag with add only code tested
 

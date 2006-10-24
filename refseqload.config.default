@@ -1,84 +1,42 @@
 #format: sh
 #
-#  refseqloader.config.defaults
+#  Configuration for refseqload
 #
 #  This file sets up environment variables that are needed for the
 #  RefSeq Sequence load
 #
-#  The default values are set to process the initial RefSeq Release
+#  The default values are set to process the RefSeq non-cums
 ###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+# establish name of master config and source it
+CONFIG_MASTER=${MGICONFIG}/master.config.sh
+
+export CONFIG_MASTER
+
+. ${CONFIG_MASTER}
 
 ###########################################################################
 #
-#  GENERAL SETTINGS
-#
-###########################################################################
-
-#  Installation directory for the RefSeq sequence load
-INSTALLDIR=${USRLOCALMGI}/dataload/refseqload
-
-#  Installation directory for the QC report product
-APP_QCRPTDIR=${QCRPTDIR}
-
-export INSTALLDIR APP_QCRPTDIR
-
-###########################################################################
-#
-#  DATABASE SETTINGS BY DATABASE
-#
-###########################################################################
-
-# MGD Connection parameters 
-MGD_DBSERVER=PROD_MGI
-#MGD_DBSERVER=DEV1_MGI
-
-MGD_DBURL=shire.informatics.jax.org:4100
-#MGD_DBURL=rohan.informatics.jax.org:4101
-
-MGD_DBNAME=mgd
-#MGD_DBNAME=mgd_sc
-
-MGD_DBUSER=mgd_dbo
-MGD_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
-
-MGD_DBSCHEMADIR=${MGDDBSCHEMADIR}
-
-export MGD_DBSERVER MGD_DBURL MGD_DBNAME
-export MGD_DBUSER MGD_DBPASSWORDFILE MGD_DBSCHEMADIR
-
-# RADAR Connection parameters 
-RADAR_DBSERVER=PROD_MGI
-#RADAR_DBSERVER=DEV1_MGI
-
-RADAR_DBURL=shire.informatics.jax.org:4100
-#RADAR_DBURL=rohan.informatics.jax.org:4101
-
-RADAR_DBNAME=radar
-#RADAR_DBNAME=radar_release
-
-RADAR_DBUSER=mgd_dbo
-RADAR_DBPASSWORDFILE=${MGIDBUTILSDIR}/.mgd_dbo_password
-
-RADAR_DBSCHEMADIR=${RADARDBSCHEMADIR}
-
-export RADAR_DBSERVER RADAR_DBURL RADAR_DBNAME RADAR_DBUSER
-export RADAR_DBPASSWORDFILE RADAR_DBSCHEMADIR 
-
-###########################################################################
-#
-#  SOFTWARE SETTINGS
+#  JAVA SETTINGS
 #
 ###########################################################################
 
 # 2G memory limit in initial mode
 # 1.5 G in incremental mode
-#JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 JAVARUNTIMEOPTS="-Xms1500m -Xmx1500m"
 
-JAVA_LIB=${JAVAPATH}/lib_java_dla/dla.jar:${JAVAPATH}/lib_java_core/core.jar:${JAVAPATH}/lib_java_dbsmgd/dbsmgd.jar:${JAVAPATH}/lib_java_dbsrdr/dbsrdr.jar
+JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
-
-CLASSPATH=.:${INSTALLDIR}/refseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
+CLASSPATH=.:${REFSEQLOAD}/refseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
 
 export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 
@@ -88,42 +46,30 @@ export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
 #
 ###########################################################################
 
-#  Java applications
-DLA_LOADER=org.jax.mgi.app.refseqload.RefSeqloader
-DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
-
-# SQL STREAM
-# this overrides the default BCP_Inline_Stream
-DLA_DB_PREFIX=MGD
-DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
-DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
-
-#  seqloader QC report shell script
-APP_SEQ_QCRPT=${APP_QCRPTDIR}/seqload/runQC.csh
-
-# molecular source processor QC report script
-APP_MSP_QCRPT=${APP_QCRPTDIR}/msp/runQC.csh
-
-export DLA_LOADER DLA_START DLA_LOAD_STREAM
-export APP_SEQ_QCRPT APP_MSP_QCRPT
-
-#  Full path to dir containing the data, report, log and archive directories
-FILEDIR=/data/loads/genbank/refseqload
-#FILEDIR=/net/mtdoom/vol/rohan/data/loads/genbank/refseqload
+#
+# output file settings
+#
 
 # Full path the the logs, reports, and archive directories
+FILEDIR=${DATALOADSOUTPUT}/genbank/refseqload
+
 LOGDIR=${FILEDIR}/logs
 RPTDIR=${FILEDIR}/reports
-ARCHIVEDIR=${FILEDIR}/archive
 OUTPUTDIR=${FILEDIR}/output
-export FILEDIR LOGDIR RPTDIR ARCHIVEDIR OUTPUTDIR
+ARCHIVEDIR=${FILEDIR}/archive
+
+export FILEDIR LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR
+
+#
+# input file settings
+#
 
 #  Frameworks expects the value 'STDIN' if jobstream script pipes input to
 #  the application.
 INFILE_NAME=STDIN
 
 # full path to input file directory when APP_RADAR_INPUT=false
-INPUTDIR=/data/downloads/ftp.ncbi.nih.gov/refseq/daily
+INPUTDIR=${DATADOWNLOADS}/ftp.ncbi.nih.gov/refseq/daily
 
 # full path to input files when APP_RADAR_INPUT=false
 APP_INFILES=${INPUTDIR}/...
@@ -133,23 +79,49 @@ APP_CAT_METHOD="/usr/local/bin/gunzip -c"
 
 export INFILE_NAME INPUTDIR APP_INFILES APP_CAT_METHOD
 
+# GenBank sequence record String start delimiter
+# there 7 spaces after LOCUS
+INFILE_BEGIN_DELIMITER="LOCUS       "
+
+# GenBank sequence record String end delimiter not including sequence
+INFILE_END_DELIMITER=\nORIGIN
+
 # true = regex matching for finding record delim is turned on
 INFILE_USE_REGEX=false
-
-# GenBank sequence record regex begin and end delimiter
-#INFILE_BEGIN_DELIMITER="^LOCUS"
-#INFILE_END_DELIMITER="^ORIGIN"
-
-# GenBank sequence record String begin and end delimiter
-# begin is LOCUS followed by 7 spaces
-INFILE_BEGIN_DELIMITER="LOCUS       "
-INFILE_END_DELIMITER=\nORIGIN
 
 export INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER INFILE_USE_REGEX
 
 # buffersize in bytes used by nio.ByteBuffer
 # 21,000,000 = ~20 MB
 INFILE_BUFFERSIZE=21000000
+
+export INFILE_BUFFERSIZE
+
+#
+# general settings
+#
+
+#  Java applications
+DLA_LOADER=org.jax.mgi.app.refseqload.RefSeqloader
+DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
+
+# SQL STREAM
+# this overrides the default BCP_Inline_Stream
+DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
+DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
+
+# prefix of Configuration variable names for the load database
+# e.g. prefixes DBSERVER, DBNAME, BCP_PATH, etc
+DLA_DB_PREFIX=MGD
+
+#  seqloader QC report shell script
+APP_SEQ_QCRPT=${QCRPTS}/seqload/runQC.csh
+
+# molecular source processor QC report script
+APP_MSP_QCRPT=${QCRPTS}/msp/runQC.csh
+
+export DLA_LOADER DLA_START DLA_LOAD_STREAM DLA_QC_STREAM
+export DLA_DB_PREFIX APP_SEQ_QCRPT APP_MSP_QCRPT
 
 # incremental, incremental_initial, or delete_reload
 # incremental_initial doesn't use a MergeSplitProcessor
@@ -162,12 +134,12 @@ SEQ_OK_TO_LOAD_REFS=false
 # incremental
 APP_RADAR_INPUT=true
 
-# max size of a set of non-cums to process in bytes -
-# 500MB compressed seems to be good
+# max size of a set of radar files to process in bytes -
+# 300MB compressed, any higher we get occasional memory exceptions
 # if set to 0, all files will be processed
-APP_RADAR_MAX=500000000
+APP_RADAR_MAX=300000000
 
-export INFILE_BUFFERSIZE SEQ_LOAD_MODE APP_RADAR_MAX APP_RADAR_INPUT
+export SEQ_LOAD_MODE SEQ_OK_TO_LOAD_REFS APP_RADAR_INPUT APP_RADAR_MAX
 
 # number of existing sequences to batch before processing
 # max is 400!
@@ -219,6 +191,7 @@ LOG_CUR=${LOGDIR}/refseqload.cur.log
 LOG_VAL=${LOGDIR}/refseqload.val.log
 
 # Send debug messages to the diagnostic log
+# toggle these to true as needed
 LOG_DEBUG=false
 DBDEBUG=false
 CACHE_DEBUG=false
@@ -303,21 +276,6 @@ SCP_OUTFILENAME=updates
 export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
 export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
 
-###########################################################################
-#
-#  MISCELLANEOUS SETTINGS
-#
-###########################################################################
-
-#  The name of the load for the subject of an email notification
-MAIL_LOADNAME="RefSeq Load"
-
-#  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_PROC="sc,lec"
-MAIL_LOG_CUR="sc"
-
-export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
-
 ##################################################################
 # repeat file processing used when in incremental mode
 ##################################################################
@@ -332,3 +290,23 @@ SEQ_REPEAT_FILE=${OUTPUTDIR}/repeats.out
 APP_REPEAT_TO_PROCESS=${SEQ_REPEAT_FILE}.to.process
 
 export APP_PROCESS_REPEATS SEQ_REPEAT_FILE APP_REPEAT_TO_PROCESS
+
+###########################################################################
+#
+#  MISCELLANEOUS SETTINGS
+#
+###########################################################################
+
+#  Installation directory for the RefSeq sequence load
+INSTALLDIR=${REFSEQLOAD}
+
+export INSTALLDIR
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="RefSeq Load"
+
+#  Recipient list for mailing the curation log file (comma-separated)
+MAIL_LOG_CUR="mgiadmin"
+
+export MAIL_LOADNAME MAIL_LOG_CUR
+
