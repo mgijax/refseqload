@@ -250,7 +250,7 @@ fi
 echo 'Running MSP QC reports' | tee -a ${LOG_DIAG}
 echo "\n`date`" >> ${LOG_DIAG}
 
-${APP_MSP_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
+${APP_MSP_QCRPT} ${JOBKEY} ${RPTDIR}
 STAT=$?
 checkStatus ${STAT} ${APP_MSP_QCRPT}
 
@@ -261,7 +261,7 @@ checkStatus ${STAT} ${APP_MSP_QCRPT}
 echo 'Running Sequence QC reports' | tee -a ${LOG_DIAG}
 echo "\n`date`" >> ${LOG_DIAG}
 
-${APP_SEQ_QCRPT} ${RADAR_DBSCHEMADIR} ${MGD_DBNAME} ${JOBKEY} ${RPTDIR}
+${APP_SEQ_QCRPT} ${JOBKEY} ${RPTDIR}
 STAT=$?
 checkStatus ${STAT} ${APP_SEQ_QCRPT}
 
