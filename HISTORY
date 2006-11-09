@@ -1,3 +1,8 @@
+TAG: refseqload-3-5-1-2
+DATE: 11/09/2006
+STAFF: sc
+CHANGES: refseqload.sh - updated parameters to runQC.csh
+
 TAG: refseqload-3-5-1-1
 DATE: 10/24/2006
 STAFF: lec
