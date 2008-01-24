@@ -230,7 +230,7 @@ fi
 
 # if we are processing the non-cums (incremental mode)
 # log the non-cums we processed
-if [ ${SEQ_LOAD_MODE} = incremental ]
+if [  ${APP_RADAR_INPUT} = true -a ${SEQ_LOAD_MODE} = incremental ]
 then
     echo "Logging processed files ${FILES_PROCESSED}" >> ${LOG_DIAG}
     for file in ${FILES_PROCESSED}

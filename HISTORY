@@ -1,3 +1,12 @@
+TAG: refseqload-3-5-4-1
+DATE: 01/24/2008
+STAFF: sc
+CHANGES: TR8743
+1) refseqload.config.default - APP_RADAR_MAX=500000000 (was 300MB)
+                             - NG=true
+2) bin/refseqload.sh - don't attempt to log processed file when
+         ${APP_RADAR_INPUT} = false
+
 TAG: refseqload-3-5-1-2
 DATE: 11/09/2006
 STAFF: sc

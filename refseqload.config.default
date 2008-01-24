@@ -137,7 +137,7 @@ APP_RADAR_INPUT=true
 # max size of a set of radar files to process in bytes -
 # 300MB compressed, any higher we get occasional memory exceptions
 # if set to 0, all files will be processed
-APP_RADAR_MAX=300000000
+APP_RADAR_MAX=500000000
 
 export SEQ_LOAD_MODE SEQ_OK_TO_LOAD_REFS APP_RADAR_INPUT APP_RADAR_MAX
 
@@ -173,7 +173,7 @@ NM=true
 NR=true
 NP=true
 NC=false
-NG=false
+NG=true
 NT=false
 NW=false
 NZ=false
