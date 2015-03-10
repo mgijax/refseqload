@@ -122,7 +122,8 @@ run ()
     #
     # log time and input files to process
     #
-    echo "\n`date`" >> ${LOG_PROC}
+    echo "" >> ${LOG_PROC}
+    echo "`date`" >> ${LOG_PROC}
     echo "Files read from stdin: ${APP_CAT_METHOD} ${APP_INFILES}" | \
 	tee -a ${LOG_DIAG} ${LOG_PROC}
     #
@@ -248,7 +249,8 @@ fi
 #
 
 echo 'Running MSP QC reports' | tee -a ${LOG_DIAG}
-echo "\n`date`" >> ${LOG_DIAG}
+echo "" >> ${LOG_DIAG}
+echo "`date`" >> ${LOG_DIAG}
 
 ${APP_MSP_QCRPT} ${JOBKEY} ${RPTDIR}
 STAT=$?
@@ -259,7 +261,8 @@ checkStatus ${STAT} ${APP_MSP_QCRPT}
 #
 
 echo 'Running Sequence QC reports' | tee -a ${LOG_DIAG}
-echo "\n`date`" >> ${LOG_DIAG}
+echo "" >> ${LOG_DIAG}
+echo "`date`" >> ${LOG_DIAG}
 
 ${APP_SEQ_QCRPT} ${JOBKEY} ${RPTDIR}
 STAT=$?
