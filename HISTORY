@@ -1,3 +1,10 @@
+TAG: refseqload-5-2-1-1
+DATE: 05/05/2015
+STAFF: sc
+CHANGES:
+* refseqload.config.default - removed QC report config
+* refseqload.sh - removed calls to QC reports
+
 TAG: refseqload-4-2-0-1
 DATE: 02/16/2009
 STAFF: sc
