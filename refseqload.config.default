@@ -75,7 +75,7 @@ INPUTDIR=${DATADOWNLOADS}/ftp.ncbi.nih.gov/refseq/daily
 APP_INFILES=${INPUTDIR}/...
 
 # how files are piped to the application
-APP_CAT_METHOD="/usr/local/bin/gunzip -c"
+APP_CAT_METHOD="gunzip -c"
 
 export INFILE_NAME INPUTDIR APP_INFILES APP_CAT_METHOD
 

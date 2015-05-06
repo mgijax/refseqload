@@ -1,3 +1,9 @@
+TAG: refseqload-5-2-1-2
+DATE: 05/06/2015
+STAFF: sc
+CHANGES:
+* refseqload.config.default - APP_CAT_METHOD="gunzip -c". Removed /usr/local/bin
+
 TAG: refseqload-5-2-1-1
 DATE: 05/05/2015
 STAFF: sc
