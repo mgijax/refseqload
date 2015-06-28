@@ -32,7 +32,7 @@ export CONFIG_MASTER
 
 # 2G memory limit in initial mode
 # 1.5 G in incremental mode
-JAVARUNTIMEOPTS="-Xms4G -Xmx4G"
+JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
 
 JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
