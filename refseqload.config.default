@@ -32,7 +32,7 @@ export CONFIG_MASTER
 
 # 2G memory limit in initial mode
 # 1.5 G in incremental mode
-JAVARUNTIMEOPTS="-Xms2G -Xmx2G"
+JAVARUNTIMEOPTS="-Xms6G -Xmx6G"
 
 JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
 
@@ -78,18 +78,6 @@ APP_INFILES=${INPUTDIR}/...
 APP_CAT_METHOD="gunzip -c"
 
 export INFILE_NAME INPUTDIR APP_INFILES APP_CAT_METHOD
-
-# GenBank sequence record String start delimiter
-# there 7 spaces after LOCUS
-INFILE_BEGIN_DELIMITER="LOCUS       "
-
-# GenBank sequence record String end delimiter not including sequence
-INFILE_END_DELIMITER=\nORIGIN
-
-# true = regex matching for finding record delim is turned on
-INFILE_USE_REGEX=false
-
-export INFILE_BEGIN_DELIMITER INFILE_END_DELIMITER INFILE_USE_REGEX
 
 # buffersize in bytes used by nio.ByteBuffer
 # 21,000,000 = ~20 MB
