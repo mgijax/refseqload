@@ -1,3 +1,9 @@
+TAG: refseqload-tr12488-1
+DATE: 03/20/2071
+STAFF: sc
+CHANGES: MICE CRISPIES PROJECT Contig epic, load NT sequences
+1) refseqload.config.default - set NT=true
+
 TAG: refseqload-6-0-4-1
 DATE: 06/16/2016
 STAFF: lec 
