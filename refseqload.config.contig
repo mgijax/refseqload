@@ -1,0 +1,293 @@
+#format: sh
+#
+#  Configuration for refseqload
+#
+#  This file sets up environment variables that are needed for the
+#  RefSeq Sequence load
+#
+#  The default values are set to process the RefSeq non-cums
+###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+# establish name of master config and source it
+CONFIG_MASTER=${MGICONFIG}/master.config.sh
+
+export CONFIG_MASTER
+
+. ${CONFIG_MASTER}
+
+###########################################################################
+#
+#  JAVA SETTINGS
+#
+###########################################################################
+
+# 2G memory limit in initial mode
+# 1.5 G in incremental mode
+JAVARUNTIMEOPTS="-Xms6G -Xmx6G"
+
+JAVA_LIB=${MGI_JAVALIB}/core.jar:${MGI_JAVALIB}/dbsmgd.jar:${MGI_JAVALIB}/dbsrdr.jar:${MGI_JAVALIB}/dla.jar
+
+CLASSPATH=.:${REFSEQLOAD}/refseqload.jar:${JAVA_LIB}:${COMMON_CLASSPATH}
+
+export JAVARUNTIMEOPTS JAVA_LIB CLASSPATH
+
+###########################################################################
+#
+#  LOAD SPECIFIC SETTINGS
+#
+###########################################################################
+
+#
+# output file settings
+#
+
+# Full path the the logs, reports, and archive directories
+FILEDIR=${DATALOADSOUTPUT}/genbank/refseqload
+
+LOGDIR=${FILEDIR}/logs
+RPTDIR=${FILEDIR}/reports
+OUTPUTDIR=${FILEDIR}/output
+ARCHIVEDIR=${FILEDIR}/archive
+
+export FILEDIR LOGDIR RPTDIR OUTPUTDIR ARCHIVEDIR
+
+#
+# input file settings
+#
+
+#  Frameworks expects the value 'STDIN' if jobstream script pipes input to
+#  the application.
+INFILE_NAME=STDIN
+
+# full path to input file directory when APP_RADAR_INPUT=false
+#INPUTDIR=${DATADOWNLOADS}/ftp.ncbi.nih.gov/refseq/release/complete
+INPUTDIR=/mgi/all/wts_projects/9800/9835/contig_data
+
+# full path to input files when APP_RADAR_INPUT=false
+APP_INFILES=${INPUTDIR}/refseqcon.mouse.*
+
+# how files are piped to the application
+#APP_CAT_METHOD="gunzip -c"
+APP_CAT_METHOD="cat"
+
+export INFILE_NAME INPUTDIR APP_INFILES APP_CAT_METHOD
+
+# buffersize in bytes used by nio.ByteBuffer
+# 21,000,000 = ~20 MB
+INFILE_BUFFERSIZE=21000000
+
+export INFILE_BUFFERSIZE
+
+#
+# general settings
+#
+
+#  Java applications
+DLA_LOADER=org.jax.mgi.app.refseqload.RefSeqloader
+DLA_START=org.jax.mgi.shr.dla.loader.DLAStart
+
+# SQL STREAM
+# this overrides the default BCP_Inline_Stream
+DLA_LOAD_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Script_Stream
+DLA_QC_STREAM=org.jax.mgi.shr.dbutils.dao.BCP_Stream
+
+# prefix of Configuration variable names for the load database
+# e.g. prefixes DBSERVER, DBNAME, BCP_PATH, etc
+DLA_DB_PREFIX=MGD
+
+export DLA_LOADER DLA_START DLA_LOAD_STREAM DLA_QC_STREAM
+export DLA_DB_PREFIX 
+
+# incremental, incremental_initial, or delete_reload
+# incremental_initial doesn't use a MergeSplitProcessor
+SEQ_LOAD_MODE=incremental
+
+# set to false; don't load any references (default is true)
+SEQ_OK_TO_LOAD_REFS=false
+
+# get non-cum input files from RADAR if 'true' and SEQ_LOAD_MODE=
+# incremental
+APP_RADAR_INPUT=false
+
+# max size of a set of radar files to process in KBbytes -
+# 300MB compressed, any higher we get occasional memory exceptions
+# if set to 0, all files will be processed
+APP_RADAR_MAX=500000
+
+export SEQ_LOAD_MODE SEQ_OK_TO_LOAD_REFS APP_RADAR_INPUT APP_RADAR_MAX
+
+# number of existing sequences to batch before processing
+# max is 400!
+SEQ_QUERY_BATCHSIZE=400
+
+export SEQ_QUERY_BATCHSIZE
+
+# true if a virtual (computationally derived) sequence
+SEQ_VIRTUAL=false
+
+# this load's MGI_User login value for DB tables CreatedBy and ModifiedBy column
+JOBSTREAM=refseq_load
+
+# SEQ_Sequence Provider controlled vocab for RefSeq 
+SEQ_PROVIDER=RefSeq
+
+# logical db name for this data provider
+SEQ_LOGICALDB=RefSeq
+
+export SEQ_VIRTUAL JOBSTREAM SEQ_PROVIDER SEQ_LOGICALDB
+
+# organisms to load
+SEQ_LOAD_MOUSE=true
+SEQ_LOAD_RAT=false
+SEQ_LOAD_HUMAN=false
+
+export SEQ_LOAD_MOUSE SEQ_LOAD_RAT SEQ_LOAD_HUMAN
+
+# Refseq seqid prefixes to load
+NM=true
+NR=true
+NP=true
+NC=false
+NG=true
+NT=true
+NW=false
+NZ=false
+ZP=false
+XM=true
+XR=true
+XP=true
+
+export NM NR NP NC NG NT NW NZ ZP XM XR XP
+
+#  Complete path name of the log files
+LOG_PROC=${LOGDIR}/refseqload.proc.log
+LOG_DIAG=${LOGDIR}/refseqload.diag.log
+LOG_CUR=${LOGDIR}/refseqload.cur.log
+LOG_VAL=${LOGDIR}/refseqload.val.log
+
+# Send debug messages to the diagnostic log
+# toggle these to true as needed
+LOG_DEBUG=false
+DBDEBUG=false
+CACHE_DEBUG=false
+
+# logger factory class - allows classes to get their own loggers
+LOG_FACTORY=org.jax.mgi.shr.dla.log.DLALoggerFactory
+
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_DEBUG DBDEBUG
+export CACHE_DEBUG LOG_FACTORY
+
+###########################################################################
+#
+#  BCP MANAGER SETTINGS BY DATABASE
+#
+###########################################################################
+
+#  Settings used to create a BCP manager for the MGD database
+MGD_BCP_PATH=${OUTPUTDIR}
+MGD_BCP_PREVENT_EXECUTE=false
+MGD_BCP_TRUNCATE_LOG=true
+MGD_BCP_DROP_INDEXES=false
+MGD_BCP_RECORD_STAMPING=false
+MGD_BCP_AUTO_FLUSH=false
+# set to true until script file name bug is fixed
+MGD_BCP_OK_TO_OVERWRITE=false
+
+export MGD_BCP_PATH MGD_BCP_PREVENT_EXECUTE MGD_BCP_TRUNCATE_LOG
+export MGD_BCP_DROP_INDEXES MGD_BCP_RECORD_STAMPING MGD_BCP_AUTO_FLUSH
+export MGD_BCP_OK_TO_OVERWRITE
+
+#  Settings used to create a BCP manager for the RADAR database
+RADAR_BCP_PATH=${OUTPUTDIR}
+RADAR_BCP_PREVENT_EXECUTE=false
+RADAR_BCP_TRUNCATE_LOG=true
+RADAR_BCP_DROP_INDEXES=false
+RADAR_BCP_RECORD_STAMPING=false
+RADAR_BCP_AUTO_FLUSH=true
+# set to true until script file name bug is fixed
+RADAR_BCP_OK_TO_OVERWRITE=false
+
+export RADAR_BCP_PATH RADAR_BCP_PREVENT_EXECUTE RADAR_BCP_TRUNCATE_LOG
+export RADAR_BCP_DROP_INDEXES RADAR_BCP_RECORD_STAMPING RADAR_BCP_AUTO_FLUSH
+export RADAR_BCP_OK_TO_OVERWRITE
+
+###########################################################################
+#
+#  SQL SCRIPTWRITER SETTINGS FOR merges and splits
+#
+###########################################################################
+
+# setting used to create a ScriptWriter for the merges and split
+MGD_SCP_PATH=${MGD_BCP_PATH}
+MGD_SCP_PREVENT_EXECUTE=false
+MGD_SCP_OK_TO_OVERWRITE=false
+
+MGD_SCP_FILENAME=mergeSplits
+
+#MGD_SCP_SUFFIX=
+MGD_SCP_OUTFILENAME=mergeSplits
+#MGD_SCP_OUTSUFFIX=
+
+export MGD_SCP_PATH MGD_SCP_PREVENT_EXECUTE MGD_SCP_OK_TO_OVERWRITE
+export MGD_SCP_FILENAME MGD_SCP_SUFFIX MGD_SCP_OUTFILENAME MGD_SCP_OUTSUFFIX
+
+###########################################################################
+#
+#  SQL SCRIPTWRITER SETTINGS FOR updates
+#
+###########################################################################
+
+# setting used to create a ScriptWriter to do MGD database updates
+SCP_PATH=${MGD_BCP_PATH}
+SCP_PREVENT_EXECUTE=false
+SCP_OK_TO_OVERWRITE=false
+
+SCP_FILENAME=updates
+
+#SCP_SUFFIX=
+SCP_OUTFILENAME=updates
+#SCP_OUTSUFFIX=
+
+export SCP_PATH SCP_PREVENT_EXECUTE SCP_OK_TO_OVERWRITE
+export SCP_FILENAME SCP_SUFFIX SCP_OUTFILENAME SCP_OUTSUFFIX
+
+##################################################################
+# repeat file processing used when in incremental mode
+##################################################################
+
+# process repeat file if true
+APP_PROCESS_REPEATS=true
+
+# full path to repeat file
+SEQ_REPEAT_FILE=${OUTPUTDIR}/repeats.out
+
+# rename repeat file to this name for processing
+APP_REPEAT_TO_PROCESS=${SEQ_REPEAT_FILE}.to.process
+
+export APP_PROCESS_REPEATS SEQ_REPEAT_FILE APP_REPEAT_TO_PROCESS
+
+###########################################################################
+#
+#  MISCELLANEOUS SETTINGS
+#
+###########################################################################
+
+#  Installation directory for the RefSeq sequence load
+INSTALLDIR=${REFSEQLOAD}
+
+export INSTALLDIR
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="RefSeq Load"
+
+export MAIL_LOADNAME
+
