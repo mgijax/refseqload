@@ -229,6 +229,14 @@ then
     done
 fi
 
+# update serialization on mgi_reference_assoc, seq_source_assoc
+cat - <<EOSQL | ${PG_DBUTILS}/bin/doisql.csh $0 | tee -a ${LOG_DIAG}
+
+select setval('mgi_reference_assoc_seq', (select max(_Assoc_key) + 1 from MGI_Reference_Assoc));
+select setval('seq_source_assoc_seq', (select max(_Assoc_key) + 1 from SEQ_Source_Assoc));
+
+EOSQL
+
 # if we are processing the non-cums (incremental mode)
 # log the non-cums we processed
 if [  ${APP_RADAR_INPUT} = true -a ${SEQ_LOAD_MODE} = incremental ]
